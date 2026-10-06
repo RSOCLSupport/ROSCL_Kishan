@@ -2,7 +2,7 @@ public with sharing class RSOCL_AdminViewController {
     @testVisible 
     public static RSOCL_MockDaoProcessInstanceController.IProcessDefination processListInstance = new RSOCL_MockDaoProcessInstanceController();
 
-    //Method to fetch all the records which are submitted for approval by All Users
+    //Method to fetch all the records which are submitted for approval by All User
     @AuraEnabled
     public static List<SubmittedRecordsWrapper> getSubmittedApprovalRecordsByAllUsers(){
         try{
