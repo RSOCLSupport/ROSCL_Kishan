@@ -1,0 +1,130 @@
+<template>
+    <div class="slds-grid-vertical RecentlyApprovedPage" >
+        <div class="slds-col">
+            <h1 class="slds-text-heading_large title"> Recently Approved/Rejected</h1>
+        </div> 
+        <div class="slds-col dashboard-card">
+            <template if:false={showNoRecordsToDisplay}>
+                <lightning-card title="" style="width:auto">
+                    <div class="mobile_table">
+                         <!-- ********** Parent Table***************** -->
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-no-row-hover" >
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px"></th>
+                                    <th aria-label="Status" aria-sort="none" scope="col">
+                                        <div class="slds-truncate">Status</div>
+                                    </th>
+                                    <th aria-label="Status" aria-sort="none" scope="col">
+                                        <div class="slds-truncate"> Record Count</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <!-- Parent Table Body -->
+                            <tbody>
+                                <template for:each={getTableData} for:item="parentData" for:index="parentIndex">
+                                    <tr key={parentData.status} class="slds-hint-parent " aria-selected="false" style={parentData.rowColor}>
+                                        <td class="expand-btn" role="gridcell">
+                                            <lightning-button-icon onclick={handleChildRowDisplayAction} data-id={parentData.status} data-val="show" if:false={parentData.isExpended} icon-name="utility:add"  variant="brand" alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                            <lightning-button-icon onclick={handleChildRowDisplayAction} data-id={parentData.status} data-val="hide" if:true={parentData.isExpended} icon-name="utility:dash"  variant="brand" alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                        </td>
+                                        <td data-label="Status" scope="row">
+                                            <div class="slds-truncate" title={parentData.status}>{parentData.status}</div>
+                                        </td>
+                                        <td data-label="Status" scope="row">
+                                            <div class="slds-truncate" title={parentData.totalChildRecordCount}>{parentData.totalChildRecordCount}</div>
+                                        </td>
+                                    </tr>
+                                   
+                                    <tr if:true={parentData.isExpended} key={parentData.status} aria-selected="false" class="slds-hint-parent">
+                                        <td colspan="1"></td>
+                                        <td colspan="4">
+                                               <!-- ************Child Table************** -->
+                                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_fixed-layout" role="parentgrid" 
+                                                aria-label="Example advanced table of Opportunities with header menu button" style="min-width: 80rem;">
+                                                <thead>
+                                                    <tr class="slds-line-height_reset">
+                                                        <th style="width: 35px"></th>
+                                                        <th aria-label="Name" aria-sort="none"
+                                                            scope="col" >
+                                                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" data-type={parentData.status} tabindex="0" onclick={sortRecs} name="recordName">
+                                                                Name
+                                                                <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={nameUpBool}></lightning-icon>
+                                                                <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={nameDWBool}></lightning-icon>
+                                                            </a>
+                                                        </th>
+                                                        <th aria-label="Name" aria-sort="none"
+                                                            scope="col" >
+                                                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" data-type={parentData.status} tabindex="0" onclick={sortRecs} name="relatedTo">
+                                                                Object
+                                                                <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={objUpBool}></lightning-icon>
+                                                                <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={objDWBool}></lightning-icon>
+                                                            </a>
+                                                        </th>
+                                                        <th aria-label="Name" aria-sort="none"
+                                                            scope="col">
+                                                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" data-type={parentData.status} tabindex="0" onclick={sortRecs} name="approvedDate">
+                                                                Approved Date
+                                                                <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={dateUpBool}></lightning-icon>
+                                                                <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={dateDWBool}></lightning-icon>
+                                                            </a>
+                                                        </th>
+                                                        <th  aria-label="Name" aria-sort="none"
+                                                            scope="col">
+                                                            <div class="slds-truncate">Comments</div>
+                                                        </th>
+                                                        <th aria-label="Name" aria-sort="none"
+                                                            scope="col">
+                                                            <div class="slds-truncate"> Useful Info</div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <!-- Child Table Body -->
+                                                <tbody>
+                                                    <template for:each={parentData.childRecords} for:item="childData"
+                                                        for:index="childIndex">
+                                                        <tr key={childData.recordName} aria-selected="false" class="slds-hint-parent">
+                                                            <td style="width: 35px"></td>
+                                                            <td>
+                                                                <div class="slds-truncate" title={childData.recordName}>
+                                                                    <a href="#" tabindex="-1" onclick={navigateToRecDetailsPage} data-type={childData.relatedTo} data-val={childData.recordId}>{childData.recordName}</a>
+                                                                </div>
+                                                            </td> 
+                                                            <td>
+                                                                <div class="slds-truncate" title={childData.relatedTo}>{childData.relatedTo}</div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="slds-truncate" title={childData.approvedDate}>{childData.approvedDate}</div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="slds-truncate" title={childData.approverComments}>{childData.approverComments}</div>
+                                                            </td>
+                                                            <td>
+                                                                <!--div class="slds-truncate slds-cell-wrap" title={childData.usefulInfo}>{childData.usefulInfo}</div-->
+                                                                <template for:each={childData.fieldDataWrap} for:item="fieldData" for:index="fieldindex">
+                                                                    <div key={fieldData.fieldLabel} class="slds-truncate slds-cell-wrap">
+                                                                        <span  style="font-weight: bold;"> {fieldData.fieldLabel}</span>: 
+                                                                        <span > {fieldData.fieldVal}</span>
+                                                                    </div>
+                                                                </template>
+                                                            </td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <lightning-spinner if:true={showSpinner} alternative-text="Loading" size="large"
+                            variant="brand"></lightning-spinner>
+                    </div>
+                </lightning-card>
+            </template>
+            <template if:true={showNoRecordsToDisplay}>
+                <span class="norecords"> Currently, There are no Approved/Rejected requests to display.</span>
+            </template>
+        </div>   
+    </div>
+</template>

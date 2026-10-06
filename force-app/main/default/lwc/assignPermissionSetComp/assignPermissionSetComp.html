@@ -1,0 +1,55 @@
+<template>
+    <div class="slds-grid-vertical assignPermisionPage" >
+        <div class="slds-col text-center">
+            <h1 class="slds-text-heading_large title">Configure Permission Set Assignment to {getUserType} Users </h1>
+            <p class="p_30">To control app access, permission sets must be assigned to users to grant them access to the Lets Approve app.</p>
+        </div>
+        <lightning-card data-type="general" if:false={getShowAdminPermissionInstruction} title="Assign Permission Set To General Users" icon-name="action:manage_perm_sets">
+            <div class="slds-p-horizontal_small m-auto" style="width: 89%;">
+                <hr/>
+                <ul class="instruction_list">
+                    <li>
+                        Go to Salesforce <a onclick={openSetup}>Setup.</a>
+                    </li>
+                    <li>
+                        Search Permission Sets in Quick Find.
+                    </li>
+                    <li>
+                        Open <b>General User Access to Mass Product</b> permission set.
+                    </li>
+                    <li>
+                        Click on <b>Manage Assigments</b> button on top.
+                    </li>
+                    <li>
+                        Click on <b>Add Assigment</b> button on top right, and select users for the the access of
+                            <b> Mass Approval Product</b> app.
+                    </li>
+                </ul>
+            </div>
+        </lightning-card>
+
+        <lightning-card data-type="admin" if:true={getShowAdminPermissionInstruction} title="Assign Permission Set to Admin Users" icon-name="action:manage_perm_sets">
+            <div class="slds-p-horizontal_small m-auto" style="width: 89%;">
+                <hr/>
+                <ul class="instruction_list">
+                    <li>
+                        Go to Salesforce <a onclick={openSetup}>Setup.</a>
+                    </li>
+                    <li>
+                        Search Permission Sets in Quick Find.
+                    </li>
+                    <li>
+                        Open <b>Admin Access to Mass Approval Product</b> permission set.
+                    </li>
+                    <li>
+                        Click on <b>Manage Assigments</b> button on top.
+                    </li>
+                    <li>
+                        Click on <b>Add Assigment</b> button on top right, and select users for the the access of
+                            <b> Mass Approval Product</b> app.
+                    </li>
+                </ul>
+            </div>
+        </lightning-card>
+    </div> 
+</template>

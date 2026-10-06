@@ -1,0 +1,140 @@
+.ApprovalReqPage {
+    background-color: white;
+    padding-bottom: 10px;
+}
+
+.ApprovalReqPage .title {
+    margin: 0 32px 0;
+    padding-top: 20px;
+    color: #008E94;
+    font-weight: bold;
+}
+
+.ApprovalReqPage .dashboard-card {
+    margin: 24px 32px 0;
+    text-align: center;
+}
+
+.btns {
+    text-align: right;
+    padding: 0 23px;
+}
+
+.btns lightning-button:first-child {
+    margin-right: 10px;
+}
+
+section.slds-modal {
+    background: #00000094;
+}
+
+/* .expand-btn {
+    --lwc-squareIconMediumBoundary: 20px !important;
+} */
+
+.parent-Checkbox {
+    padding-left: 37px;
+}
+
+.text_align-center {
+    text-align: center;
+}
+
+.dashboard-card .norecords {
+    text-align: center;
+    font-size: medium;
+    color: black;
+}
+
+lightning-icon {
+    display: none;
+}
+
+.column-btn {
+    width: 100%;
+    border: none;
+}
+
+.slds-th__action[data-sortdirection="asc"]:hover lightning-icon[icon-name="utility:arrowdown"],
+.slds-th__action[data-sortdirection="desc"]:hover lightning-icon[icon-name="utility:arrowup"] {
+    display: block;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.mobile_table .scroll tr[role="parent"] td:first-of-type, .mobile_table .scroll tr[role="parent"] th:first-of-type {
+    position: sticky;
+    left: 0;
+    /* border-left: none; */
+    background: #f4f4f4;
+    color: #212121;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+.mobile_table .scroll tr[role="parent"] td:first-of-type:after, .mobile_table .scroll tr[role="parent"] th:first-of-type:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -1px;
+    height: 100%;
+    width: 1px;
+    background: #000;
+}
+
+.mobile_table .scroll tr[role="parent"] td:last-of-type, .mobile_table .scroll tr[role="parent"] th:last-of-type {
+    /* border-right: none; */
+}
+
+.mobile_table .scroll thead tr{
+    background: #f4f4f4;
+}
+
+.mobile_table th button, .mobile_table td button{
+    background: transparent !important;
+}
+
+.mobile_table th , .mobile_table td {
+    font-size: 14px !important;
+}
+
+@media screen and (max-width: 600px) {
+    .ApprovalReqPage{
+        overflow: hidden !important;
+    }
+    .ApprovalReqPage .dashboard-card {
+        margin: 0 !important;
+        text-align: center;
+    }
+    .mobile_table .responsive thead {
+        visibility: hidden;
+        height: 0;
+        position: absolute;
+    }
+
+    .mobile_table .responsive tr {
+        display: block;
+        margin-bottom: .625em;
+    }
+
+    .mobile_table .responsive td {
+        /* border: 1px solid;
+        border-bottom: none; */
+        display: block;
+        font-size: .8em;
+        text-align: right;
+    }
+
+    .mobile_table .responsive td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .mobile_table .responsive td:last-child {
+        /* border-bottom: 1px solid; */
+    }
+}

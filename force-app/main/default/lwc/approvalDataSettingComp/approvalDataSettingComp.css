@@ -1,0 +1,45 @@
+.ApprovalSettingPage{
+    background-color: white;
+    padding-bottom: 10px;
+}
+.ApprovalSettingPage .title{
+    margin: 0 32px 0;
+    padding-top: 20px;
+    color: #008E94;
+    font-weight: bold;
+}
+.ApprovalSettingPage .dashboard-card {
+    margin: 0 32px 0;
+    text-align: center; 
+}
+.existingRecError{
+    text-align: center;
+    color:red;
+}
+.infomsg{
+    font-size: large;
+}
+.newbtn{
+    float: center;
+    margin-top: 15px;
+}
+section.slds-modal {
+    background: #00000094;
+}
+/*:host .slds-form-element__label {
+    --lwc-formLabelFontSize: .9rem;
+    font-weight: bold;
+} */
+/*.slds-form-element__label {
+    --lwc-formLabelFontSize: .9rem
+    font-weight: bold;
+    
+}
+section.slds-modal .slds-modal__content .slds-truncate {
+   font-weight: bold;
+    
+}
+section.slds-modal .slds-modal__content .fieldLabel{
+    --lwc-formLabelFontSize: .9rem;
+    
+} */

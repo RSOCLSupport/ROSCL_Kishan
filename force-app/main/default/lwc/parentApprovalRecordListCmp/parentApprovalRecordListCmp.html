@@ -1,0 +1,17 @@
+<template>
+    
+    <lightning-card  variant="Narrow"  title="Items to approve" icon-name="standard:account">
+        <lightning-button-icon  icon-name="utility:down" variant="border-filled" alternative-text="Show More" slot="actions"></lightning-button-icon>
+        <div>
+            <lightning-datatable
+                    key-field="id"
+                    data={data}
+                    show-row-number-column
+                    row-number-offset={rowOffset}
+                    suppress-bottom-bar
+                    columns={columns}>
+            </lightning-datatable>
+        </div>
+        <p slot="footer">Card Footer</p>
+    </lightning-card>
+</template>

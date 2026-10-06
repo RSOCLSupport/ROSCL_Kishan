@@ -1,0 +1,91 @@
+* {
+    /*--primary-color:  #008E94;*/
+    --primary-color: #0D98BA;
+}
+
+.primary-text-color {
+    color: var(--primary-color) !important;
+}
+
+.numbers {
+    border: 3px solid var(--primary-color);
+    border-radius: 30px;
+    height: 40px;
+    width: 40px;
+}
+
+ol li {
+    --lwc-spacingXSmall: 0 !important;
+}
+
+.bg-grey {
+    background: #757675;
+    color: white;
+}
+
+.max-w_inherit {
+    max-width: inherit !important;
+}
+
+.border-square {
+    color: #b0b0b0;
+    border-radius: 10%;
+    border: 1px solid #b0b0b0;
+    padding: 0.2em;
+    float: right;
+    margin-right: 0.2em;
+}
+
+.border-square:active,
+.border-square:focus {
+    border: 1px solid rgb(7, 7, 101);
+    /* here configure as your needs */
+    color: red;
+}
+
+.border-square:hover {
+    border: 1px solid rgb(7, 7, 101);
+    cursor: pointer;
+}
+
+.icon-css {
+    width: 11rem;
+    margin: auto;
+    margin-top: 37px;
+}
+
+@media (min-width: 1400px) {
+    .container[role="main"] {
+        max-width: 50% !important;
+    }
+    .setup-icon{
+        --lwc-squareIconLargeBoundary: 4rem;
+    }
+    .progress-step{
+        padding-top: 25px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+    .container[role="main"] {
+        max-width: 50% !important;
+    }
+    .setup-icon{
+        --lwc-squareIconLargeBoundary: 4rem;
+    }
+    .progress-step{
+        padding-top: 25px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+    .container[role="main"] {
+        max-width: 65% !important;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+    .container[role="main"] {
+        max-width: 100% !important;
+    }
+}

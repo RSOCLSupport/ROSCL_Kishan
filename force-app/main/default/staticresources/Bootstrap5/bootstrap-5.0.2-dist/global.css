@@ -1,0 +1,76 @@
+@import "./css/bootstrap.min.css";
+*{
+    --highlight-text-color: #206a7c;
+}
+
+.progress-step .slds-progress {
+    margin: initial !important;
+}
+
+a{
+    text-decoration: unset !important;
+    font-size: var(--lwc-fontSize3,0.8125rem) !important;
+}
+
+.mobile_table {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+}
+
+.mobile_table .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+}
+
+.mobile_table .table td {
+    padding: 7px 10px;
+    /* border: 1px solid; */
+}
+
+.mobile_table .word-break {
+    word-break: break-all;
+}
+
+.mobile_table .scroll-container {
+    margin-bottom: 40px;
+    /* border-left: 1px solid;
+    border-right: 1px solid; */
+}
+
+.mobile_table .scroll {
+    margin: 0;
+}
+
+.p_30{
+    padding: 30px;
+}
+
+.approval_data-setting lightning-combobox label.slds-form-element__label{
+    font-size: 20px !important;
+    font-weight: 400 !important;
+}
+
+.approval_data-setting lightning-combobox lightning-base-combobox-item{
+    font-size: 15px !important;
+    text-align: left !important;
+}
+
+.color-greyblue{
+    color: var(--highlight-text-color);
+}
+
+rsocl-setup-instruction-component a{
+    color: var(--highlight-text-color) !important;
+    font-size: inherit !important;
+    font-weight: 500 !important;
+}
+
+c-assign-permission-set-comp lightning-card[data-type="general"] .slds-card__header-title{
+    color: orange;
+}
+
+c-assign-permission-set-comp lightning-card[data-type="admin"] .slds-card__header-title{
+    color: #3457bf;
+}

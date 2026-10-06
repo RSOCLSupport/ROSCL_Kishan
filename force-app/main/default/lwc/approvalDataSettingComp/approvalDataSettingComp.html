@@ -1,0 +1,81 @@
+<template>
+    <div class="slds-grid-vertical ApprovalSettingPage" >
+        <div class="slds-col text-center">
+            <h1 class="slds-text-heading_large title">Create Approval Data Settings Here</h1>
+            <p class="p_30">
+                The Approval Data Setting feature allows you to choose which data fields will
+                 be displayed on the approval request. 
+                 For instance, if you have an approval process for an Account,
+                  you need to create a corresponding Approval Data Setting Record for 
+                  Account Object and choose the fields that you wish to display on the approval request.
+            </p>
+        </div>
+        <div class="slds-col dashboard-card">
+            <lightning-card  title="" class="approval_data-setting">                
+                <p class="slds-p-horizontal_small infomsg">Click on New button to create Approval Data Settings record.</p>
+                <div class="newbtn">
+                    <lightning-button label="New" slot="actions" onclick={showApprovalDataCreatePopup}></lightning-button>
+                </div>
+                <template if:true={showModal}>
+                    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+                        class="slds-modal slds-fade-in-open" >
+                        <div class="slds-modal__container">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                title="Close" onclick={closeModal}>
+                                <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            </button>
+                            <div class="slds-modal__header">
+                                <h1 data-id="modal-heading-01" class="slds-modal__title slds-hyphenate">Create Approval Data Settings Record
+                                </h1>
+                            </div>
+                            <div class="slds-modal__content slds-p-around_medium" data-id="modal-content-id-1">
+                                <template if:true={showRecordExistMsg}>
+                                    <div class="existingRecError">
+                                        <p> The record is already exists. Please click on the record link <a href="#"  tabindex="-1" onclick={openRecordInNewTab}
+                                            data-val={approveSettingsData.recordId}>{approveSettingsData.recordName}</a> to edit the fields</p>
+                                    </div>
+                                </template>
+                                <lightning-layout multiple-rows>
+                                    <lightning-layout-item size="6" padding="around-small">
+                                        <lightning-combobox name="objectName"
+                                            class="statusFilter"
+                                            value=""
+                                            placeholder="Select Objects" 
+                                            options={objects} 
+                                            onchange={handleObjectChange}
+                                            >
+                                        </lightning-combobox>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12 of 12" padding="around-small">
+                                        <lightning-dual-listbox
+                                            class="slds-form-element__label slds-media__body fieldLabel"
+                                            id="selectOptions"
+                                            name="Select Field"
+                                            label="Select Useful Info Fields"
+                                            source-label="Available Options"
+                                            selected-label="Selected Options"
+                                            options={fields}
+                                            value={selectedOptionsList}
+                                            required-options={requiredOptions}
+                                            onchange={handleFieldChange}
+                                        >
+                                        </lightning-dual-listbox>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <div class="slds-modal__footer">
+                                <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                                    onclick={closeModal}>Cancel</button>
+                                <button class="slds-button slds-button_brand" onclick={createLetsApproveSettingRecord}>Save</button>
+                            </div>
+                        </div>
+                        <lightning-spinner if:true={showSpinner} alternative-text="Loading" size="large"
+                            variant="brand">
+                        </lightning-spinner>
+                    </section>
+                </template>
+            </lightning-card>
+        </div>
+    </div>
+</template>

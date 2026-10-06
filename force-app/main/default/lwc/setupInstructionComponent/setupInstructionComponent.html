@@ -1,0 +1,135 @@
+<template>
+    <div class="exampleHolder" if:false={isResourceRender}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+    <template if:true={progressStepMap.isStepsVisible}>
+        <div class="container w-100 max-w_inherit bg-white">
+            <div class="row py-3">
+                <div class="col-md-4 col-12 lh-1 row">
+                    <div class="col-md-2 col-2 text-end setup-icon">
+                        <lightning-icon icon-name="custom:custom67" alternative-text="Approved" title="Approved"
+                            size="large"></lightning-icon>
+                    </div>
+                    <div class="col-md-10 col-8">
+                        <p>Setup</p>
+                        <h5>
+                            Configure Let's Approve Product Components
+                        </h5>
+                    </div>
+                    <div class="d-block d-sm-none col-2 d-md-none">
+                        <lightning-icon class="border-square" variant="border-filled" icon-name="utility:close"
+                            size="small" alternative-text="Indicates close" onclick={closeModal}>
+                        </lightning-icon>
+                    </div>
+                </div>
+                <div class="d-block d-sm-none col-12">
+                    <hr />
+                </div>
+                <div class="col-md-6 col-10 offset-2 offset-sm-0 progress-step">
+                    <lightning-progress-indicator current-step={stepValue}>
+                        <lightning-progress-step label="Step One" value="step1">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Step Two" value="step2">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Step Three" value="step3">
+                        </lightning-progress-step>
+                    </lightning-progress-indicator>
+                </div>
+                <div class="col-md-2 col-12 d-none d-md-block">
+                    <lightning-icon class="border-square" variant="border-filled" icon-name="utility:close" size="small"
+                        alternative-text="Indicates close" onclick={closeModal}>
+                    </lightning-icon>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5 d-none d-md-block">
+            <div class="row">
+                <div class="col-md-1 position-relative">
+                    <lightning-button label="Back" title="Back" onclick={handleClick}
+                        class="slds-m-left_x-small position-absolute top-50" data-type="back"></lightning-button>
+                </div>
+                <div class="col-md-10">
+                    <template if:true={isfirstStep}>
+                        <c-assign-permission-set-comp show-admin-permission-instruction="false"></c-assign-permission-set-comp>
+                    </template>
+                    <template if:true={isSecondStep}>
+                        <c-assign-permission-set-comp show-admin-permission-instruction="true"></c-assign-permission-set-comp>
+                    </template>
+                    <template if:true={isThirdStep}>
+                        <c-approval-data-setting-comp></c-approval-data-setting-comp>
+                    </template>
+                </div>
+                <div class="col-md-1 position-relative">
+                    <lightning-button if:false={hideNextBtn} variant="brand" label="Next" title="Next"
+                        onclick={handleClick} class="slds-m-left_x-small position-absolute top-50"
+                        data-type="next"></lightning-button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template if:false={progressStepMap.isStepsVisible}>
+        <div class="container bg-light" role="main">
+            <div class="row">
+                <div class="icon-css">
+                    <img src={appIcon}>
+                </div>
+                <h1 class="text-center p-5 primary-text-color">
+                    Let's Approve
+                </h1>
+                <h5 class="text-center color-greyblue fw-normal pb-3">
+                    Enrich your Salesforce expeirence with the power of RSOCL Mass Approval Records
+                </h5>
+                <h6 class="text-center color-greyblue fw-normal pb-4">
+                    Help your organization be more productive in Salesforce by enhancing your approval process with Mass
+                    Approval Records App.
+                </h6>
+            </div>
+            <div class="row border p-4">
+                <div class="col-md-1 col-2">
+                    <p class="position-relative numbers">
+                        <span class="position-absolute top-50 start-50 translate-middle fw-bold">1</span>
+                    </p>
+                </div>
+                <div class="col-md-9 col-10">
+                    <h4>
+                        Configure Let's Approve Product Components
+                    </h4>
+                    <p>
+                        Configuration Steps on how to setup Let's Approve product.
+                    </p>
+                </div>
+                <div class="col-md-2 text-end col-12">
+                    <lightning-button variant="brand" label="Continue" title="Continue" onclick={handleClick}
+                        class="w-100" data-type="continue"></lightning-button>
+                </div>
+            </div>
+        </div>
+        <div class="container bg-light mt-5" role="main">
+            <div class="row bg-grey py-3 px-4">
+                <div class="col-md-6">
+                    <span class="fs-4">
+                        Need help?
+                    </span>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a class="align-middle text-white fs-5" href="https://rsocl.com/contactus/" target="_blank">Contact
+                        Us</a>
+                </div>
+            </div>
+            <div class="row bg-light py-2 px-4">
+                <div class="col-md-12">
+                    <p>
+                        We want you to help in the best possible way.
+                    </p>
+                    <p>
+                        You can contact RSOCL support through the <a href="https://rsocl.com/contactus/" class="fs-6"
+                            target="_blank">RSOCL Contact Us</a> as well as find resources,
+                        troubleshooting tips, and useful information to help you use our products.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

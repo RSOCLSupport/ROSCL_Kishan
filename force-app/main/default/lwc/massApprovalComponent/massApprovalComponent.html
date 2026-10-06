@@ -1,0 +1,818 @@
+<template>
+    <div class="slds-grid-vertical ApprovalReqPage">
+        <div class="slds-col">
+            <h1 class="slds-text-heading_large title"> Approval Requests</h1>
+        </div>
+        <div class="slds-col dashboard-card">
+            <template if:false={showNoRecordsToDisplay}>
+                <lightning-card title="">
+                    <div class="btns">
+                        <lightning-button label="Approve" variant="success" disabled={disableApproveBtn}
+                            onclick={handleApproveAction}>
+                        </lightning-button>
+                        <lightning-button label="Reject" variant="destructive" disabled={disableRejectBtn}
+                            onclick={handleRejectAction}>
+                        </lightning-button>
+                    </div>
+                    <br />
+                    <div if:false={isCurrentDeviceMobile} class="table-responsive overflow-hidden">
+                        <table aria-multiselectable="true"
+                            class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols"
+                            role="parentgrid"
+                            aria-label="Example advanced table of Opportunities with header menu button">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="slds-text-align_right" scope="col" style="width:125px">
+                                        <lightning-input type="checkbox" name="parent-select" data-type="grand-parent"
+                                            if:true={isGrandParentSelected} onchange={selectRecord} checked
+                                            label="Select All"></lightning-input>
+                                        <lightning-input type="checkbox" name="parent-select" data-type="grand-parent"
+                                            if:false={isGrandParentSelected} onchange={selectRecord}
+                                            label="Select All"></lightning-input>
+                                    </th>
+                                    <th style="width: 45px"></th>
+                                    <th aria-label="Object name" aria-sort="none" scope="col">
+                                        <button class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                            onclick={handleSortdata} data-sortby="objectName" data-sortdirection="asc">
+                                            <span class="slds-truncate" title="Object name"
+                                                data-sortby="objectName">Object
+                                                Name</span>
+                                            <span class="slds-icon_container slds-icon-utility-arrowdown"
+                                                data-sortby="objectName">
+                                                <lightning-icon icon-name="utility:arrowdown"
+                                                    alternative-text="Utility arrowdown" title="arrowdown"
+                                                    size="x-small"></lightning-icon>
+                                                <lightning-icon icon-name="utility:arrowup"
+                                                    alternative-text="Utility arrowup" title="arrowup"
+                                                    size="x-small"></lightning-icon>
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th aria-label="Records Count" aria-sort="none" scope="col">
+                                        <button class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                            onclick={handleSortdata} data-sortby="totalSelectedRecords"
+                                            data-sortdirection="asc">
+                                            <span class="slds-truncate" title="Records Count"
+                                                data-sortby="totalSelectedRecords">Records Count</span>
+                                            <span class="slds-icon_container slds-icon-utility-arrowdown"
+                                                data-sortby="totalSelectedRecords">
+                                                <lightning-icon icon-name="utility:arrowdown"
+                                                    alternative-text="Utility arrowdown" title="arrowdown"
+                                                    size="x-small"></lightning-icon>
+                                                <lightning-icon icon-name="utility:arrowup"
+                                                    alternative-text="Utility arrowup" title="arrowup"
+                                                    size="x-small"></lightning-icon>
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th class="" scope="col" style="width:3.25rem">
+                                        <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={getTableData} for:item="parentData" for:index="parentIndex">
+                                    <tr key={parentData.objectName} aria-selected="false" class="slds-hint-parent">
+                                        <td class="parent-Checkbox" role="gridcell">
+                                            <lightning-input type="checkbox" name="parent-select"
+                                                data-name={parentData.objectName} data-type="parent"
+                                                data-index={parentIndex} onchange={selectRecord} checked
+                                                if:true={parentData.isSelected} ></lightning-input>
+                                            <lightning-input type="checkbox" name="parent-select"
+                                                data-name={parentData.objectName} data-type="parent"
+                                                data-index={parentIndex} onchange={selectRecord}
+                                                if:false={parentData.isSelected} ></lightning-input>
+                                        </td>
+                                        <td class="slds-text-align_right expand-btn" role="gridcell">
+                                            <lightning-button-icon onclick={handleChildRowDisplayAction}
+                                                data-id={parentData.objectName} data-val="show"
+                                                if:false={parentData.isExpended} icon-name="utility:add" variant="brand"
+                                                alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                            <lightning-button-icon onclick={handleChildRowDisplayAction}
+                                                data-id={parentData.objectName} data-val="hide"
+                                                if:true={parentData.isExpended} icon-name="utility:dash" variant="brand"
+                                                alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                        </td>
+                                        <th scope="row" tabindex="0">
+                                            <div class="slds-truncate" title={parentData.objectName}>
+                                                <a href="#" tabindex="-1">{parentData.objectName}</a>
+                                            </div>
+                                        </th>
+                                        <td role="gridcell">
+                                            <div class="slds-truncate" title="Acme"
+                                                style="color:rgb(1, 118, 211); font-weight:bold;">
+                                                {parentData.totalSelectedRecords}</div>
+                                        </td>
+                                    </tr>
+                                    <tr if:true={parentData.isExpended} key={parentData.objectName}
+                                        aria-selected="false" class="slds-hint-parent">
+                                        <td colspan="1"></td>
+                                        <td colspan="4">
+                                            <table aria-multiselectable="true"
+                                                class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols "
+                                                role="childgrid"
+                                                aria-label="Example advanced table of Opportunities with header menu button"
+                                                data-parentname={parentData.objectName}>
+                                                <thead>
+                                                    <tr class="slds-line-height_reset">
+                                                        <th style="width: 25px;"></th>
+                                                        <th aria-label="Name" aria-sort="none" class="slds-is-sortable"
+                                                            scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="recordName"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Name"
+                                                                    data-sortby="recordName"
+                                                                    data-parentindex={parentIndex}>Name</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="recordName"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Name" aria-sort="none" class="slds-is-sortable"
+                                                            scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="submittedBy"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Submitted By"
+                                                                    data-sortby="submittedBy"
+                                                                    data-parentindex={parentIndex}>Submitted
+                                                                    By</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="submittedBy"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Submitted Date" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="submittedDate"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Submitted Date"
+                                                                    data-sortby="submittedDate"
+                                                                    data-parentindex={parentIndex}>Submitted
+                                                                    Date</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="submittedDate"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Submitter Message" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="submitterMessage"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Submitter Message"
+                                                                    data-sortby="submitterMessage"
+                                                                    data-parentindex={parentIndex}>Submitter
+                                                                    Message</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="submitterMessage"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Useful Info" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="usefulInfo"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Useful Info"
+                                                                    data-sortby="usefulInfo"
+                                                                    data-parentindex={parentIndex}>Useful
+                                                                    Info</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="usefulInfo"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Comment" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="comment"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Comment"
+                                                                    data-sortby="comment"
+                                                                    data-parentindex={parentIndex}>Comment</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="comment"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Actions" aria-sort="none"
+                                                            class="slds-has-button-menu slds-is-resizable slds-is-sortable"
+                                                            scope="col">
+                                                            <a class="slds-th__action slds-text-link_reset" href="#"
+                                                                role="button" tabindex="-1">
+                                                                <span class="slds-assistive-text">Sort by: </span>
+                                                                <div
+                                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                    <span class="slds-truncate"
+                                                                        title="Actions">Actions</span>
+                                                                    <span
+                                                                        class="slds-icon_container slds-icon-utility-arrowdown">
+                                                                        <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon "
+                                                                            aria-hidden="true">
+                                                                            <use
+                                                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown">
+                                                                            </use>
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
+                                                            </a>
+                                                            <button
+                                                                class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small"
+                                                                aria-haspopup="true" tabindex="-1"
+                                                                title="Show Comment column actions">
+                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small"
+                                                                    aria-hidden="true">
+                                                                    <use
+                                                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#chevrondown">
+                                                                    </use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Show Comment
+                                                                    column
+                                                                    actions</span>
+                                                            </button>
+                                                            <div class="slds-resizable">
+                                                                <input type="range" aria-label="Comment column width"
+                                                                    class="slds-resizable__input slds-assistive-text"
+                                                                    data-id="cell-resize-handle-621" max="1000" min="20"
+                                                                    tabindex="-1" />
+                                                                <span class="slds-resizable__handle">
+                                                                    <span class="slds-resizable__divider"></span>
+                                                                </span>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template for:each={parentData.childRecords} for:item="childData"
+                                                        for:index="childIndex">
+                                                        <tr key={childData.workItemId} aria-selected="false"
+                                                            class="slds-hint-parent">
+                                                            <td>
+                                                                <lightning-input type="checkbox"
+                                                                    data-name={parentData.objectName}
+                                                                    name="child-select" data-index={parentIndex}
+                                                                    data-childindex={childIndex} data-type="child"
+                                                                    checked if:true={childData.isSelected}
+                                                                    onchange={selectRecord} ></lightning-input>
+                                                                <lightning-input type="checkbox"
+                                                                    data-name={parentData.objectName}
+                                                                    name="child-select" data-index={parentIndex}
+                                                                    data-childindex={childIndex} data-type="child"
+                                                                    if:false={childData.isSelected}
+                                                                    onchange={selectRecord} ></lightning-input>
+                                                            </td>
+                                                            <td scope="row" tabindex="0">
+                                                                <div class="slds-truncate" title={childData.recordName}>
+                                                                    <a href="#" tabindex="-1"
+                                                                        onclick={showActualRecordPopup}
+                                                                        data-type={childData.relatedTo}
+                                                                        style={childData.textStyle}
+                                                                        data-val={childData.recordId}>{childData.recordName}</a>
+                                                                </div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate"
+                                                                    title={childData.submittedBy}>
+                                                                    {childData.submittedBy}</div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate"
+                                                                    title={childData.submittedDate}>
+                                                                    {childData.submittedDate}</div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate"
+                                                                    title={childData.submitterMessage}>
+                                                                    {childData.submitterMessage}</div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <!--div class="slds-truncate" title={childData.usefulInfo}>
+                                                                    {childData.usefulInfo}</div-->
+                                                                <template for:each={childData.fieldDataWrap}
+                                                                    for:item="fieldData" for:index="fieldindex">
+                                                                    <div key={fieldData.fieldLabel}
+                                                                        class="slds-truncate slds-cell-wrap">
+                                                                        <span style="font-weight: bold;">
+                                                                            {fieldData.fieldLabel}</span>:
+                                                                        <span> {fieldData.fieldVal}</span>
+                                                                    </div>
+                                                                </template>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate" title={childData.comment}>
+                                                                    {childData.comment}</div>
+                                                            </td>
+                                                            <td role="gridcell" class="text_align-center">
+                                                                <lightning-button label="Add Comment"
+                                                                    data-index={childIndex}
+                                                                    data-name={childData.relatedTo} variant="brand"
+                                                                    onclick={onclickAddCommentBtn}>
+                                                                </lightning-button>
+                                                            </td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div if:true={isCurrentDeviceMobile} class="mobile_table">
+                        <table class="table scroll table-sm">
+                            <thead>
+                                <tr role="parent">
+                                    <th scope="col" style="min-width: 125px;">
+                                        <lightning-input type="checkbox" name="parent-select" data-type="grand-parent"
+                                            if:true={isGrandParentSelected} onchange={selectRecord} checked
+                                            label="Select All"></lightning-input>
+                                        <lightning-input type="checkbox" name="parent-select" data-type="grand-parent"
+                                            if:false={isGrandParentSelected} onchange={selectRecord}
+                                            label="Select All"></lightning-input>
+                                    </th>
+                                    <th style="width: 30px"></th>
+                                    <th scope="col">
+                                        <button class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                            onclick={handleSortdata} data-sortby="objectName" data-sortdirection="asc">
+                                            <span class="slds-truncate" title="Object name"
+                                                data-sortby="objectName">Object
+                                                Name</span>
+                                            <span class="slds-icon_container slds-icon-utility-arrowdown"
+                                                data-sortby="objectName">
+                                                <lightning-icon icon-name="utility:arrowdown"
+                                                    alternative-text="Utility arrowdown" title="arrowdown"
+                                                    size="x-small"></lightning-icon>
+                                                <lightning-icon icon-name="utility:arrowup"
+                                                    alternative-text="Utility arrowup" title="arrowup"
+                                                    size="x-small"></lightning-icon>
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th scope="col">
+                                        <button class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                            onclick={handleSortdata} data-sortby="totalSelectedRecords"
+                                            data-sortdirection="asc">
+                                            <span class="slds-truncate" title="Records Count"
+                                                data-sortby="totalSelectedRecords">Records Count</span>
+                                            <span class="slds-icon_container slds-icon-utility-arrowdown"
+                                                data-sortby="totalSelectedRecords">
+                                                <lightning-icon icon-name="utility:arrowdown"
+                                                    alternative-text="Utility arrowdown" title="arrowdown"
+                                                    size="x-small"></lightning-icon>
+                                                <lightning-icon icon-name="utility:arrowup"
+                                                    alternative-text="Utility arrowup" title="arrowup"
+                                                    size="x-small"></lightning-icon>
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th style="width:3.25rem">
+                                        <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={getTableData} for:item="parentData" for:index="parentIndex">
+                                    <tr role="parent" key={parentData.objectName} aria-selected="false" class="slds-hint-parent">
+                                        <td class="parent-Checkbox" role="gridcell">
+                                            <lightning-input type="checkbox" name="parent-select"
+                                                data-name={parentData.objectName} data-type="parent"
+                                                data-index={parentIndex} onchange={selectRecord} checked
+                                                if:true={parentData.isSelected} ></lightning-input>
+                                            <lightning-input type="checkbox" name="parent-select"
+                                                data-name={parentData.objectName} data-type="parent"
+                                                data-index={parentIndex} onchange={selectRecord}
+                                                if:false={parentData.isSelected} ></lightning-input>
+                                        </td>
+                                        <td class="slds-text-align_right expand-btn" role="gridcell">
+                                            <lightning-button-icon onclick={handleChildRowDisplayAction}
+                                                data-id={parentData.objectName} data-val="show"
+                                                if:false={parentData.isExpended} icon-name="utility:add" variant="brand"
+                                                alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                            <lightning-button-icon onclick={handleChildRowDisplayAction}
+                                                data-id={parentData.objectName} data-val="hide"
+                                                if:true={parentData.isExpended} icon-name="utility:dash" variant="brand"
+                                                alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                        </td>
+                                        <td scope="row" tabindex="0">
+                                            <div class="slds-truncate" title={parentData.objectName}>
+                                                <a href="#" tabindex="-1">{parentData.objectName}</a>
+                                            </div>
+                                        </td>
+                                        <td role="gridcell">
+                                            <div class="slds-truncate" title="Acme"
+                                                style="color:rgb(1, 118, 211); font-weight:bold;">
+                                                {parentData.totalSelectedRecords}</div>
+                                        </td>
+                                    </tr>
+                                    <tr if:true={parentData.isExpended} key={parentData.objectName}
+                                        aria-selected="false" class="slds-hint-parent">
+                                        <td colspan="1"></td>
+                                        <td colspan="4">
+                                            <table aria-multiselectable="true"
+                                                class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols "
+                                                role="childgrid"
+                                                aria-label="Example advanced table of Opportunities with header menu button"
+                                                data-parentname={parentData.objectName} style="min-width: 80rem;">
+                                                <thead>
+                                                    <tr class="slds-line-height_reset">
+                                                        <th style="width: 35px;"></th>
+                                                        <th aria-label="Name" aria-sort="none" class="slds-is-sortable"
+                                                            scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="recordName"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Name"
+                                                                    data-sortby="recordName"
+                                                                    data-parentindex={parentIndex}>Name</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="recordName"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Name" aria-sort="none" class="slds-is-sortable"
+                                                            scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="submittedBy"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Submitted By"
+                                                                    data-sortby="submittedBy"
+                                                                    data-parentindex={parentIndex}>Submitted
+                                                                    By</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="submittedBy"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Submitted Date" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="submittedDate"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Submitted Date"
+                                                                    data-sortby="submittedDate"
+                                                                    data-parentindex={parentIndex}>Submitted
+                                                                    Date</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="submittedDate"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Submitter Message" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="submitterMessage"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Submitter Message"
+                                                                    data-sortby="submitterMessage"
+                                                                    data-parentindex={parentIndex}>Submitter
+                                                                    Message</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="submitterMessage"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Useful Info" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="usefulInfo"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Useful Info"
+                                                                    data-sortby="usefulInfo"
+                                                                    data-parentindex={parentIndex}>Useful
+                                                                    Info</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="usefulInfo"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Comment" aria-sort="none"
+                                                            class="slds-is-sortable" scope="col">
+                                                            <button
+                                                                class="slds-th__action column-btn slds-grid_vertical-align-center"
+                                                                onclick={handleSortdata} data-sortby="comment"
+                                                                data-sortdirection="asc" data-parentindex={parentIndex}>
+                                                                <span class="slds-truncate" title="Comment"
+                                                                    data-sortby="comment"
+                                                                    data-parentindex={parentIndex}>Comment</span>
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-utility-arrowdown"
+                                                                    data-sortby="comment"
+                                                                    data-parentindex={parentIndex}>
+                                                                    <lightning-icon icon-name="utility:arrowdown"
+                                                                        alternative-text="Utility arrowdown"
+                                                                        title="arrowdown"
+                                                                        size="x-small"></lightning-icon>
+                                                                    <lightning-icon icon-name="utility:arrowup"
+                                                                        alternative-text="Utility arrowup"
+                                                                        title="arrowup" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th aria-label="Actions" aria-sort="none"
+                                                            class="slds-has-button-menu slds-is-resizable slds-is-sortable"
+                                                            scope="col">
+                                                            <a class="slds-th__action slds-text-link_reset" href="#"
+                                                                role="button" tabindex="-1">
+                                                                <span class="slds-assistive-text">Sort by: </span>
+                                                                <div
+                                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                                    <span class="slds-truncate"
+                                                                        title="Actions">Actions</span>
+                                                                    <span
+                                                                        class="slds-icon_container slds-icon-utility-arrowdown">
+                                                                        <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon "
+                                                                            aria-hidden="true">
+                                                                            <use
+                                                                                xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown">
+                                                                            </use>
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
+                                                            </a>
+                                                            <button
+                                                                class="slds-button slds-button_icon slds-th__action-button slds-button_icon-x-small"
+                                                                aria-haspopup="true" tabindex="-1"
+                                                                title="Show Comment column actions">
+                                                                <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small"
+                                                                    aria-hidden="true">
+                                                                    <use
+                                                                        xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#chevrondown">
+                                                                    </use>
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Show Comment
+                                                                    column
+                                                                    actions</span>
+                                                            </button>
+                                                            <div class="slds-resizable">
+                                                                <input type="range" aria-label="Comment column width"
+                                                                    class="slds-resizable__input slds-assistive-text"
+                                                                    data-id="cell-resize-handle-621" max="1000" min="20"
+                                                                    tabindex="-1" />
+                                                                <span class="slds-resizable__handle">
+                                                                    <span class="slds-resizable__divider"></span>
+                                                                </span>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template for:each={parentData.childRecords} for:item="childData"
+                                                        for:index="childIndex">
+                                                        <tr key={childData.workItemId} aria-selected="false"
+                                                            class="slds-hint-parent">
+                                                            <td>
+                                                                <lightning-input type="checkbox"
+                                                                    data-name={parentData.objectName}
+                                                                    name="child-select" data-index={parentIndex}
+                                                                    data-childindex={childIndex} data-type="child"
+                                                                    checked if:true={childData.isSelected}
+                                                                    onchange={selectRecord} ></lightning-input>
+                                                                <lightning-input type="checkbox"
+                                                                    data-name={parentData.objectName}
+                                                                    name="child-select" data-index={parentIndex}
+                                                                    data-childindex={childIndex} data-type="child"
+                                                                    if:false={childData.isSelected}
+                                                                    onchange={selectRecord} ></lightning-input>
+                                                            </td>
+                                                            <td scope="row" tabindex="0">
+                                                                <div class="slds-truncate" title={childData.recordName}>
+                                                                    <a href="#" tabindex="-1"
+                                                                        onclick={showActualRecordPopup}
+                                                                        data-type={childData.relatedTo}
+                                                                        style={childData.textStyle}
+                                                                        data-val={childData.recordId}>{childData.recordName}</a>
+                                                                </div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate"
+                                                                    title={childData.submittedBy}>
+                                                                    {childData.submittedBy}</div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate"
+                                                                    title={childData.submittedDate}>
+                                                                    {childData.submittedDate}</div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate"
+                                                                    title={childData.submitterMessage}>
+                                                                    {childData.submitterMessage}</div>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <!--div class="slds-truncate" title={childData.usefulInfo}>
+                                                                    {childData.usefulInfo}</div-->
+                                                                <template for:each={childData.fieldDataWrap}
+                                                                    for:item="fieldData" for:index="fieldindex">
+                                                                    <div key={fieldData.fieldLabel}
+                                                                        class="slds-truncate slds-cell-wrap">
+                                                                        <span style="font-weight: bold;">
+                                                                            {fieldData.fieldLabel}</span>:
+                                                                        <span> {fieldData.fieldVal}</span>
+                                                                    </div>
+                                                                </template>
+                                                            </td>
+                                                            <td role="gridcell">
+                                                                <div class="slds-truncate" title={childData.comment}>
+                                                                    {childData.comment}</div>
+                                                            </td>
+                                                            <td role="gridcell" class="text_align-center">
+                                                                <lightning-button label="Add Comment"
+                                                                    data-index={childIndex}
+                                                                    data-name={childData.relatedTo} variant="brand"
+                                                                    onclick={onclickAddCommentBtn}>
+                                                                </lightning-button>
+                                                            </td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <section if:true={showModal} role="dialog" tabindex="-1" aria-modal="true"
+                        aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Cancel and close</span>
+                            </button>
+                            <div class="slds-modal__header">
+                                <h1 data-id="modal-heading-01" class="slds-modal__title slds-hyphenate">Approve or
+                                    Reject comment
+                                </h1>
+                            </div>
+                            <div class="slds-modal__content slds-p-around_medium" data-id="modal-content-id-1">
+                                <lightning-textarea name="coomentBox" data-id="commentBox"
+                                    placeholder="add your comments...     "></lightning-textarea>
+                                <lightning-input type="checkbox" label={addCommentForAllMessage} name="input1"
+                                    data-id="checkBoxforAllComment"></lightning-input>
+                            </div>
+                            <div class="slds-modal__footer">
+                                <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                                    onclick={closeModal}>Cancel</button>
+                                <button class="slds-button slds-button_brand" onclick={addComment}>Save</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <template if:true={modalContainer}>
+                        <section class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <button
+                                        class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                        title="Close" onclick={closeModalAction}>
+                                        <lightning-icon icon-name="utility:close" alternative-text="close"
+                                            variant="inverse" size="small"></lightning-icon>
+                                    </button>
+                                    <h2 class="slds-text-heading_medium slds-hyphenate">Record Detail</h2>
+                                </header>
+
+                                <div class="slds-modal__content slds-p-around_medium">
+                                    <lightning-record-form record-id={recordIdStr} object-api-name={recordObjApiName}
+                                        mode="readonly" layout-type="Full" columns="2">
+                                    </lightning-record-form>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <lightning-button class="slds-p-around_small" variant="brand"
+                                        label="View Full Record Information" onclick={navigateToRecDetailsPage}>
+                                    </lightning-button>
+                                    <lightning-button variant="brand" label="Close" title="Close"
+                                        onclick={closeModalAction}></lightning-button>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+
+                    </template>
+
+                    <lightning-spinner if:true={showSpinner} alternative-text="Loading" size="large"
+                        variant="brand"></lightning-spinner>
+                </lightning-card>
+            </template>
+            <template if:true={showNoRecordsToDisplay}>
+                <span class="norecords"> Currently, There are no Approval requests to take action on.</span>
+            </template>
+        </div>
+    </div>
+</template>

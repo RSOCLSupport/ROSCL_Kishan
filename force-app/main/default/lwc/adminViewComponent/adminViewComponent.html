@@ -1,0 +1,145 @@
+<template>
+    <div class="slds-grid-vertical AdminViewPage" >
+        <div class="slds-col">
+            <h1 class="slds-text-heading_large title"> Admin View</h1>
+        </div>
+        <div class="slds-col dashboard-card">
+            <template if:false={showNoRecordsToDisplay}>
+                <lightning-card title="" style="width:auto">
+                    <!-- ********** Parent Table***************** -->
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered" role="parentgrid"
+                        aria-label="Example advanced table of Opportunities with header menu button" >
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th style="width: 40px"></th>
+                            <th aria-label="Object name" aria-sort="none"
+                                scope="col" >
+                                <div class="slds-truncate">Object Name</div>
+                            </th>
+                            <th aria-label="Record Count" aria-sort="none"
+                                scope="col" >
+                                <div class="slds-truncate">Record Count</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <!-- Parent Table Body -->
+                    <tbody>
+                        <template for:each={getTableData} for:item="parentData" for:index="parentIndex">
+                            <tr key={parentData.objectName} aria-selected="false" class="slds-hint-parent">
+                                <td class="expand-btn" role="gridcell">
+                                    <lightning-button-icon onclick={handleChildRowDisplayAction} data-id={parentData.objectName} data-val="show" if:false={parentData.isExpended} icon-name="utility:add"  variant="brand" alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                    <lightning-button-icon onclick={handleChildRowDisplayAction} data-id={parentData.objectName} data-val="hide" if:true={parentData.isExpended} icon-name="utility:dash"  variant="brand" alternative-text="Settings" title="Settings"></lightning-button-icon>
+                                </td>
+                                <th  data-label="Object Name" scope="row">
+                                    <div class="slds-truncate" title={parentData.objectName}>{parentData.objectName}</div>
+                                </th>
+                                <td>
+                                    <div class="slds-truncate" title="totalChildRecordCount">{parentData.totalChildRecordCount}</div>
+                                </td>
+                            </tr>
+                            <tr if:true={parentData.isExpended} key={parentData.objectName} aria-selected="false" class="slds-hint-parent">
+                                <td colspan="1"></td>
+                                <td colspan="4">
+                                    <!-- ************Child Table************** -->
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_fixed-layout" role="parentgrid" 
+                                        aria-label="Example advanced table of Opportunities with header menu button" style="min-width: 85rem;">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th style="width: 35px"></th>
+                                                <th aria-label="Name" aria-sort="none"
+                                                    scope="col" >
+                                                    <!--div class="slds-truncate">Name</div-->
+                                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" data-type={parentData.objectName} tabindex="0" onclick={sortRecs} name="recordName">
+                                                        Name
+                                                        <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={nameUpBool}></lightning-icon>
+                                                        <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={nameDWBool}></lightning-icon>
+                                                    </a>
+                                                </th>
+                                                <th aria-label="Submitted By" aria-sort="none"
+                                                    scope="col" >
+                                                    <!--div class="slds-truncate">Name</div-->
+                                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" data-type={parentData.objectName} tabindex="0" onclick={sortRecs} name="submittedBy">
+                                                        Submitted By
+                                                        <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={submiterUpBool}></lightning-icon>
+                                                        <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={submiterDWBool}></lightning-icon>
+                                                    </a>
+                                                </th>
+                                                <th aria-label="Submitted Date" aria-sort="none"
+                                                    scope="col" >
+                                                    <!--div class="slds-truncate">Name</div-->
+                                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" data-type={parentData.objectName} tabindex="0" onclick={sortRecs} name="submittedDate">
+                                                        Submitted Date
+                                                        <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={dateUpBool}></lightning-icon>
+                                                        <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={dateDWBool}></lightning-icon>
+                                                    </a>
+                                                </th>
+                                                <th aria-label="Submitter Message" aria-sort="none"
+                                                    scope="col" >
+                                                    <div class="slds-truncate">Submitter Message</div>
+                                                </th>
+                                                <th aria-label="Approver" aria-sort="none"
+                                                    scope="col" >
+                                                    <!--div class="slds-truncate">Name</div-->
+                                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"  data-type={parentData.objectName} tabindex="0" onclick={sortRecs} name="Approver">
+                                                        Approver
+                                                        <lightning-icon icon-name="utility:arrowup" size="x-small" if:true={approverUpBool}></lightning-icon>
+                                                        <lightning-icon icon-name="utility:arrowdown" size="x-small" if:true={approverDWBool}></lightning-icon>
+                                                    </a>
+                                                </th>
+                                                <th aria-label="Useful Info" aria-sort="none"
+                                                    scope="col" >
+                                                    <div class="slds-truncate">Useful Info</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <!-- Child Table Body -->
+                                        <tbody>
+                                            <template for:each={parentData.childRecords} for:item="childData"
+                                                for:index="childIndex">
+                                                <tr key={childData.workItemId} aria-selected="false" class="slds-hint-parent">
+                                                    <td style="width: 35px"></td>
+                                                    <td>
+                                                        <div class="slds-truncate" title={childData.recordName}>
+                                                            <a href="#" tabindex="-1" onclick={navigateToRecDetailsPage} data-type={childData.relatedTo} data-val={childData.recordId}>{childData.recordName}</a>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-truncate" title={childData.submittedBy}>{childData.submittedBy}</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-truncate" title={childData.submittedBy}>{childData.submittedDate}</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-truncate" title={childData.submittedBy}>{childData.submitterMessage}</div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="slds-truncate" title={childData.submittedBy}>{childData.Approver}</div>
+                                                    </td>
+                                                    <td>
+                                                        <!--div class="slds-truncate slds-cell-wrap" title={childData.submittedBy}>{childData.usefulInfo}</div-->
+                                                        <template for:each={childData.fieldDataWrap} for:item="fieldData" for:index="fieldindex">
+                                                            <div key={fieldData.fieldLabel} class="slds-truncate slds-cell-wrap">
+                                                                <span  style="font-weight: bold;"> {fieldData.fieldLabel}</span>: 
+                                                                <span > {fieldData.fieldVal}</span>
+                                                            </div>
+                                                        </template>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <lightning-spinner if:true={showSpinner} alternative-text="Loading" size="large"
+                        variant="brand"></lightning-spinner>
+                </lightning-card>
+            </template>
+            <template if:true={showNoRecordsToDisplay}>
+                <span class="norecords"> Currently, There are no Approval requests to display.</span>
+            </template>
+        </div>
+    </div>
+</template>

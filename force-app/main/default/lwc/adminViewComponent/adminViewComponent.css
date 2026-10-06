@@ -1,0 +1,22 @@
+.AdminViewPage{
+    background-color: white;
+    padding-bottom: 10px;
+}
+.AdminViewPage .title{
+    margin: 0 32px 0;
+    padding-top: 20px;
+    color: #008E94;
+    font-weight: bold;
+}
+.AdminViewPage .dashboard-card {
+    margin: 24px 32px 0;
+    text-align: center; 
+}
+.dashboard-card .norecords{
+    text-align: center;
+    font-size: medium; 
+    color: black;
+}
+.expand-btn {
+    --lwc-squareIconMediumBoundary: 20px !important;
+}
