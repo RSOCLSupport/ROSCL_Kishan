@@ -1,149 +1,186 @@
+/**
+ * @description Controller for the approval data setting screen
+ */
 public with sharing class RSOCL_ApprovalDataSettingController {
 
-    @testVisible 
+    /**
+     * @description DAO instance, replaced with mock in test class
+     */
+    @TestVisible
     public static RSOCL_MockDaoProcessInstanceController.IProcessDefination processListInstance = new RSOCL_MockDaoProcessInstanceController();
-    
-    @Auraenabled
-    public static List<ObjectWrap> getObjects()
-    {
-        try{
-        List<ObjectWrap> objWrapList = new List<ObjectWrap>();
-        // Get Active approval processes across the org
-        List<ProcessDefinition> processList = processListInstance.getObjects('Active', 'Approval');
 
-        if(processList.isEmpty()){
+    /**
+     * @description Gets objects which have an active approval process
+     * @return List of ObjectWrap
+     */
+    @AuraEnabled
+    public static List<ObjectWrap> getObjects(){
+        try{
+            List<ObjectWrap> objWrapList = new List<ObjectWrap>();
+            // active approval processes across the org
+            List<ProcessDefinition> processList = processListInstance.getObjects('Active', 'Approval');
+            if(processList.isEmpty()){
+                return objWrapList;
+            }
+            Set<String> setOfObjNames = new Set<String>();
+            for(ProcessDefinition pd : processList){
+                setOfObjNames.add(pd.TableEnumOrId);
+            }
+            Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
+            for(String objApiName : setOfObjNames){
+                objWrapList.add(buildObjectWrap(gd.get(objApiName)));
+            }
             return objWrapList;
         }
-        Set<String> setofOBjNames = new Set<String>(); 
-        if(!processList.isEmpty()){
-            for(ProcessDefinition pd : processList ){
-                setofOBjNames.add(pd.TableEnumOrId);
+        catch(Exception e){
+            RSOCL_ExceptionLogger.logError(e, 'RSOCL_ApprovalDataSettingController', 'getObjects');
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    /**
+     * @description Gets all fields of the given object
+     * @param objectName object api name
+     * @return List of FieldWrap
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<FieldWrap> getFields(String objectName){
+        try{
+            Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe();
+            Map<String, Schema.SObjectField> fmap = gd.get(objectName).getDescribe().fields.getMap();
+            List<FieldWrap> strList = new List<FieldWrap>();
+            for(String fieldName : fmap.keySet()){
+                strList.add(buildFieldWrap(fieldName, fmap.get(fieldName)));
             }
+            return strList;
         }
-        map <String,Schema.SObjectType> gd = Schema.getGlobalDescribe();
-        for( String objapiname : setofOBjNames){
-            ObjectWrap objwrap = new ObjectWrap();
-            Schema.SObjectType sobjType = gd.get(objapiname);
-            Schema.DescribeSObjectResult r = sobjType.getDescribe();
-            objwrap.objLabel = r.getLabel();
-            objwrap.objName = r.getName();
-            objWrapList.add(objwrap);
+        catch(Exception e){
+            RSOCL_ExceptionLogger.logError(e, 'RSOCL_ApprovalDataSettingController', 'getFields');
+            throw new AuraHandledException(e.getMessage());
         }
-        return objWrapList;
-    }
-    catch(Exception e){
-        RSOCL_ExceptionLogger.logError(e, 'RSOCL_ApprovalDataSettingController', 'getObjects');
-        throw new AuraHandledException(e.getMessage());
-    }
     }
 
-    @Auraenabled(cacheable=true)
-    public static List<FieldWrap> getFields(string objectName)
-    {
+    /**
+     * @description Saves the approval data setting for an object if it does not exist already
+     * @param objectName object api name
+     * @param fieldList list of field api names
+     * @return SaveResult with record id, name and status
+     */
+    @AuraEnabled
+    public static SaveResult saveApproveSettings(String objectName, List<String> fieldList){
         try{
-        Map<String, Schema.SObjectType> gd = Schema.getGlobalDescribe(); 
-        Schema.SObjectType ctype = gd.get(objectName); 
-        Map<String, Schema.SobjectField> fmap = ctype.getDescribe().fields.getMap();   
-        List<FieldWrap> strList = new List<FieldWrap>();
-        for(String fieldName: fmap.keySet()) {
-            FieldWrap wmp = new FieldWrap();
-            wmp.fieldName = fieldName;
-            wmp.fieldLabel = fmap.get(fieldName).getDescribe().getLabel();        
-            strList.add(wmp);
+            List<Approval_Data_Setting__c> existingApprovalSetting = processListInstance.getApprovalDataSettings(objectName);
+            if(!existingApprovalSetting.isEmpty()){
+                SaveResult existing = new SaveResult();
+                existing.recordId = existingApprovalSetting[0].Id;
+                existing.status = 'Existing Record';
+                existing.recordName = existingApprovalSetting[0].Name;
+                return existing;
+            }
+            return insertSetting(objectName, fieldList);
         }
-        return strList;
-    }
-    catch(Exception e){
-        RSOCL_ExceptionLogger.logError(e, 'RSOCL_ApprovalDataSettingController', 'getFields');
-        throw new AuraHandledException(e.getMessage());
-    }
+        catch(Exception e){
+            RSOCL_ExceptionLogger.logError(e, 'RSOCL_ApprovalDataSettingController', 'saveApproveSettings');
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 
-    @Auraenabled
-    public static SaveResult saveApproveSettings(String objectName, List<String>fieldList){
-        try{
+    // describe is costly, so it is kept out of the loop in getObjects
+    private static ObjectWrap buildObjectWrap(Schema.SObjectType sobjType){
+        Schema.DescribeSObjectResult r = sobjType.getDescribe();
+        ObjectWrap objWrap = new ObjectWrap();
+        objWrap.objLabel = r.getLabel();
+        objWrap.objName = r.getName();
+        return objWrap;
+    }
+
+    private static FieldWrap buildFieldWrap(String fieldName, Schema.SObjectField field){
+        FieldWrap fieldWrap = new FieldWrap();
+        fieldWrap.fieldName = fieldName;
+        fieldWrap.fieldLabel = field.getDescribe().getLabel();
+        return fieldWrap;
+    }
+
+    // creates the new setting record and prepares the result
+    private static SaveResult insertSetting(String objectName, List<String> fieldList){
         SaveResult result = new SaveResult();
-        Set<Id> successIds = new Set<Id>();
-        List<Approval_Data_Setting__c>  existingApprovalSetting = processListInstance.getApprovalDataSettings(objectName);
-        if (existingApprovalSetting.size() > 0 ) {
-            result.recordId = existingApprovalSetting[0].Id;
-            result.status = 'Existing Record';
-            result.recordName = existingApprovalSetting[0].Name;
+        String fieldsValue = '';
+        for(String fieldApiName : fieldList){
+            fieldsValue += fieldApiName + ',';
         }
-        else{
-            List<Approval_Data_Setting__c> approvalSettingsList = new  List<Approval_Data_Setting__c>();
-            Approval_Data_Setting__c approvalsetting = new Approval_Data_Setting__c();
-            approvalsetting.Object_API_name__c = objectName;
-            String mystring = '';
-            for(String sss : fieldList){
-                mystring += sss + ',' ;
-            }
-            approvalsetting.Approval_Fields__c = mystring;
-            approvalSettingsList.add(approvalsetting);
+        Approval_Data_Setting__c approvalSetting = new Approval_Data_Setting__c();
+        approvalSetting.Object_API_name__c = objectName;
+        approvalSetting.Approval_Fields__c = fieldsValue;
 
-            Database.SaveResult[] srList = Database.insert(approvalSettingsList, false);
-            // Iterate through each returned result
-           
-            for (Database.SaveResult sr : srList) {
-                if (sr.isSuccess()) {
-                    // Operation was successful, so get the ID of the record that was processed
-                    System.debug('Successfully inserted Approval Data Setting. ' + sr.getId());
-                    if(sr.getId()!= null){
-                        result.recordId = sr.getId();
-                        result.status = 'SUCCESS';
-                       // result.recordName = '';
-                        successIds.add(sr.getId());
-                    }
-                }
-                else {
-                    // Operation failed, so get all errors                
-                    for(Database.Error err : sr.getErrors()) {
-                        System.debug('The following error has occurred.');                    
-                        System.debug(err.getStatusCode() + ': ' + err.getMessage());
-                        result.status = 'FAILED';
-                        result.recordId = '';
-                        result.recordName = '';
-                    }
-                }
-            }
-        }
-        if(result.status == 'SUCCESS' && !successIds.isEmpty() ){
-            Approval_Data_Setting__c successRec = [SELECT  Name FROM Approval_Data_Setting__c WHERE Id IN:successIds  ];
+        Database.SaveResult[] srList = Database.insert(new List<Approval_Data_Setting__c>{approvalSetting}, false, AccessLevel.USER_MODE);
+        Database.SaveResult sr = srList[0];
+        if(sr.isSuccess() && sr.getId() != null){
+            System.debug(LoggingLevel.DEBUG, 'Successfully inserted Approval Data Setting. ' + sr.getId());
+            result.recordId = sr.getId();
+            result.status = 'SUCCESS';
+            Approval_Data_Setting__c successRec = [SELECT Name FROM Approval_Data_Setting__c WHERE Id = :sr.getId() WITH USER_MODE];
             result.recordName = successRec.Name;
+        }else if(!sr.isSuccess()){
+            for(Database.Error err : sr.getErrors()){
+                System.debug(LoggingLevel.ERROR, err.getStatusCode() + ': ' + err.getMessage());
+            }
+            result.status = 'FAILED';
+            result.recordId = '';
+            result.recordName = '';
         }
         return result;
     }
-    catch(Exception e){
-        RSOCL_ExceptionLogger.logError(e, 'RSOCL_ApprovalDataSettingController', 'saveApproveSettings');
-        throw new AuraHandledException(e.getMessage());
-    }
-    }
 
-    public class ObjectWrap
-    {
-        @Auraenabled
-        public string objName{get;set;}
-        @Auraenabled
-        public string objLabel{get;set;}
-    }
-
-    public class FieldWrap
-    {
-        @Auraenabled
-        public string fieldName{get;set;}
-        @Auraenabled
-        public string fieldLabel{get;set;}
+    /**
+     * @description Wrapper for object name and label
+     */
+    public class ObjectWrap{
+        /**
+         * @description object api name
+         */
+        @AuraEnabled
+        public String objName{get;set;}
+        /**
+         * @description object label
+         */
+        @AuraEnabled
+        public String objLabel{get;set;}
     }
 
-    public class SaveResult 
-    {
-        @Auraenabled
-        public string recordId;
-        @Auraenabled
-        public string status;
-        @Auraenabled
-        public string recordName;
-
+    /**
+     * @description Wrapper for field name and label
+     */
+    public class FieldWrap{
+        /**
+         * @description field api name
+         */
+        @AuraEnabled
+        public String fieldName{get;set;}
+        /**
+         * @description field label
+         */
+        @AuraEnabled
+        public String fieldLabel{get;set;}
     }
 
+    /**
+     * @description Result of the save operation
+     */
+    public class SaveResult{
+        /**
+         * @description id of the saved record
+         */
+        @AuraEnabled
+        public String recordId;
+        /**
+         * @description SUCCESS, FAILED or Existing Record
+         */
+        @AuraEnabled
+        public String status;
+        /**
+         * @description name of the saved record
+         */
+        @AuraEnabled
+        public String recordName;
+    }
 }

@@ -1,39 +1,43 @@
-@isTest
-public with sharing class RSOCL_ApprovalProcessedDataTest {
-    @isTest
-    public static void testGetProcessedAprrovalRecords(){
-        try{
-            RSOCL_MockProcessInstanceControllerTest mockDaoTest = new RSOCL_MockProcessInstanceControllerTest();
-            RSOCL_MockDaoProcessInstanceController mockDao = new RSOCL_MockDaoProcessInstanceController();
-            mockDao.getProcessInstance(null, null, null, null);
-            mockDao.getApprovalDataSettings();
+@IsTest
+private class RSOCL_ApprovalProcessedDataTest {
 
-            String processInstanceData = '{"Id":"04g2w000003rbSHAAZ","TargetObjectId":"a012w00001DQmGSAA2","CreatedDate":"2023-03-11T09:20:50.000Z", ' + 
-                                     '"Workitems": {"totalSize": "1","done": true, "records":[{"ProcessInstanceId":"04g2w000003rbSHAAZ","Id":"04i2w000004P4BYAA0","OriginalActorId":"0052w00000DyipuAAB"}]},' + 
-                                     '"Steps":{"totalSize": "1","done": true, "records":[{"ProcessInstanceId":"04g2w000003rbSHAAY","Id":"04h2w000005Nd8ZAAS","OriginalActorId":"0052w00000DyipuAAA","Comments":"asdasd", "StepStatus":"Approved", "SystemModstamp":"2023-03-11T09:20:50.000Z"}]}}';
+    @IsTest
+    static void testGetProcessedAprrovalRecords(){
+        User runningUser = [SELECT Id FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1];
+        System.runAs(runningUser){
+            try{
+                RSOCL_MockProcessInstanceControllerTest mockDaoTest = new RSOCL_MockProcessInstanceControllerTest();
+                RSOCL_MockDaoProcessInstanceController mockDao = new RSOCL_MockDaoProcessInstanceController();
+                mockDao.getProcessInstance(null, null, null, null);
+                mockDao.getApprovalDataSettings();
 
-            ProcessInstance processInstance = (ProcessInstance)JSON.deserialize(processInstanceData, ProcessInstance.class);
-            Map<Id, sObject> sObjectMap = new Map<Id, sObject>();
-            Opportunity opp = new Opportunity();
-            sObjectMap.put('a012w00001DQmGSAA2', opp);
+                String processInstanceData = '{"Id":"04g2w000003rbSHAAZ","TargetObjectId":"a012w00001DQmGSAA2","CreatedDate":"2023-03-11T09:20:50.000Z", ' +
+                                         '"Workitems": {"totalSize": "1","done": true, "records":[{"ProcessInstanceId":"04g2w000003rbSHAAZ","Id":"04i2w000004P4BYAA0","OriginalActorId":"0052w00000DyipuAAB"}]},' +
+                                         '"Steps":{"totalSize": "1","done": true, "records":[{"ProcessInstanceId":"04g2w000003rbSHAAY","Id":"04h2w000005Nd8ZAAS","OriginalActorId":"0052w00000DyipuAAA","Comments":"asdasd", "StepStatus":"Approved", "SystemModstamp":"2023-03-11T09:20:50.000Z"}]}}';
 
-            Approval_Data_Setting__c testApprovalData = new Approval_Data_Setting__c(Id = RSOCL_MockProcessInstanceControllerTest.getFakeId(Approval_Data_Setting__c.SObjectType), Approval_Fields__c = 'AccountId', Object_API_name__c = 'Opportunity');
+                ProcessInstance processInstance = (ProcessInstance)JSON.deserialize(processInstanceData, ProcessInstance.class);
+                Map<Id, sObject> sObjectMap = new Map<Id, sObject>();
+                Opportunity opp = new Opportunity();
+                sObjectMap.put('a012w00001DQmGSAA2', opp);
 
-            mockDaoTest.processInstanceList.add(processInstance);
-            mockDaoTest.approvalDataSettingList.add(testApprovalData);
-            mockDaoTest.sObjectMap = sObjectMap;
+                Approval_Data_Setting__c testApprovalData = new Approval_Data_Setting__c(Id = RSOCL_MockProcessInstanceControllerTest.getFakeId(Approval_Data_Setting__c.SObjectType), Approval_Fields__c = 'AccountId', Object_API_name__c = 'Opportunity');
 
-            RSOCL_ApprovalProcessedDataController.processListInstance = mockDaoTest;
-            
-            Test.startTest();
-            List<RSOCL_ApprovalProcessedDataController.SubmittedRecordsWrapper> result = RSOCL_ApprovalProcessedDataController.getProcessedAprrovalRecords();
+                mockDaoTest.processInstanceList.add(processInstance);
+                mockDaoTest.approvalDataSettingList.add(testApprovalData);
+                mockDaoTest.sObjectMap = sObjectMap;
 
-            System.assertEquals(1, result.size(), 'Result is not correct');
-            Test.stopTest();
-        } catch (Exception err){
-            RSOCL_ExceptionLogger.logError(err, 'RSOCL_ApprovalProcessedDataTest', 'testGetProcessedAprrovalRecords');
-            System.assert(false, err.getMessage());
-            System.debug('err---' + err.getMessage());
+                RSOCL_ApprovalProcessedDataController.processListInstance = mockDaoTest;
+
+                Test.startTest();
+                List<RSOCL_ApprovalProcessedDataController.SubmittedRecordsWrapper> result = RSOCL_ApprovalProcessedDataController.getProcessedAprrovalRecords();
+                Test.stopTest();
+
+                System.assertEquals(1, result.size(), 'Result is not correct');
+            } catch (Exception err){
+                RSOCL_ExceptionLogger.logError(err, 'RSOCL_ApprovalProcessedDataTest', 'testGetProcessedAprrovalRecords');
+                System.debug(LoggingLevel.ERROR, 'err---' + err.getMessage());
+                System.assert(false, err.getMessage());
+            }
         }
     }
 }
