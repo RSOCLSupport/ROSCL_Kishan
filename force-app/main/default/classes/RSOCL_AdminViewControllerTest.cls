@@ -1,6 +1,6 @@
-@isTest
+@IsTest
 public with sharing class RSOCL_AdminViewControllerTest {
-    @isTest
+   @IsTest
     public static void testGetSubmittedApprovalRecordsByAllUsers(){
         try{
             RSOCL_MockProcessInstanceControllerTest mockDaoTest = new RSOCL_MockProcessInstanceControllerTest();

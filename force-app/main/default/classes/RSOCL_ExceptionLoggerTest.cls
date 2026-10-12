@@ -1,7 +1,7 @@
-@isTest
+@IsTest
 private class RSOCL_ExceptionLoggerTest {
     
-    @isTest
+   @IsTest
     static void testLogError() {
         // Create a mock exception for testing
         Exception mockException = new TestException('Test Exception');
