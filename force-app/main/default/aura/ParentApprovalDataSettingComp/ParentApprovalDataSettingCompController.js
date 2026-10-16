@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-expressions */
 ({
-	init : function(component, event, helper) {
-		console.log('IN init................');
-	}
-})
+  init: function () {
+    // Intentionally left blank
+  }
+});
