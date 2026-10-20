@@ -1,12 +1,22 @@
 {
   "packageDirectories": [
     {
+      "versionName": "ver 1.0",
+      "versionNumber": "1.0.0.NEXT",
       "path": "force-app",
-      "default": true
+      "default": true,
+      "package": "Mass Records Approval",
+      "versionDescription": ""
     }
   ],
-  "name": "New_Let&#39;s_Approval_Backup",
-  "namespace": "",
+  "name": "MassRecordsApproval",
+  "namespace": "massapprv",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "67.0"
+  "sourceApiVersion": "67.0",
+  "packageAliases": {
+    "Mass Records Approval": "0HodM0000006SODSA2",
+    "Mass Records Approval@1.0.0-1": "04tdM000000e4cnQAA",
+    "Mass Records Approval@1.0.0-2": "04tdM000000e4o5QAA",
+    "Mass Records Approval@1.0.0-3": "04tdM000000e593QAA"
+  }
 }

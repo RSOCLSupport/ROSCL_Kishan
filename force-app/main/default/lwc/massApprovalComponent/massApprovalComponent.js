@@ -431,15 +431,11 @@ export default class MassApprovalComponent extends NavigationMixin(
               const mode = "dismissable";
               this.showNotification(title, message, variant, mode);
             }
+            this.getSubmittedApprovals();
           })
           .catch((error) => {
             console.log("error#" + error);
           });
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => {
-          // eslint-disable-next-line no-eval
-          eval("$A.get('e.force:refreshView').fire();");
-        }, 1000);
       }
     } catch (e) {
       console.error("error message:", e);

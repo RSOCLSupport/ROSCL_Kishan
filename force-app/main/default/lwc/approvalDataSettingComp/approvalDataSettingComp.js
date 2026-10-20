@@ -4,6 +4,7 @@ import getFields from "@salesforce/apex/RSOCL_ApprovalDataSettingController.getF
 import saveApproveSettings from "@salesforce/apex/RSOCL_ApprovalDataSettingController.saveApproveSettings";
 import { NavigationMixin } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import APPROVAL_DATA_SETTING_OBJECT from "@salesforce/schema/Approval_Data_Setting__c";
 
 export default class ApprovalDataSettingComp extends NavigationMixin(
   LightningElement
@@ -129,7 +130,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
               recId,
               recordName
             );
-            // eval("$A.get('e.force:refreshView').fire();");
           } else if (this.approveSettingsData.status === "FAILED") {
             this.showSpinner = false;
             const title = "ERROR";
@@ -137,7 +137,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
             const mode = "dismissable";
             const message = "There is an error creating records.";
             this.showNotification(title, message, variant, mode);
-            // eval("$A.get('e.force:refreshView').fire();");
           }
 
           this.showModal = false;
@@ -161,7 +160,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
 
   closeModal() {
     this.showModal = false;
-    // eval("$A.get('e.force:refreshView').fire();");
   }
 
   openRecordInNewTab() {
@@ -169,16 +167,13 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
       type: "standard__recordPage",
       attributes: {
         recordId: this.approveSettingsData.recordId,
-        objectApiName: "Approval_Data_Setting__c",
+        objectApiName: APPROVAL_DATA_SETTING_OBJECT.objectApiName,
         actionName: "view",
         tabName: "details"
       }
     }).then((generatedUrl) => {
       window.open(generatedUrl);
     });
-    // eslint-disable-next-line no-eval
-    eval("$A.get('e.force:refreshView').fire();");
-    //this.showModal = true;
   }
 
   showNotificationForCreation(title, variant, mode, recId, recordName) {
