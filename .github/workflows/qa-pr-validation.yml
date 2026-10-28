@@ -9,8 +9,8 @@ on:
       - 'force-app/**'
 
 jobs:
-  code-quality-qa:
-    name: Code Quality & Security (ESLint & PMD)
+  validate-qa-build:
+    name: Validate Build on QA Org (RSOCL_Approved_QA)
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
@@ -23,9 +23,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Install Dependencies
-        run: npm install --legacy-peer-deps
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
@@ -33,53 +30,31 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install Salesforce CLI & Plugins
+        run: |
+          npm install -g @salesforce/cli
+          echo y | sf plugins install sfdx-git-delta
+
       - name: Install PMD
         run: |
           wget -q https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.0.0/pmd-dist-7.0.0-bin.zip
           unzip -q pmd-dist-7.0.0-bin.zip
           echo "$GITHUB_WORKSPACE/pmd-bin-7.0.0/bin" >> $GITHUB_PATH
 
-      - name: Install sfdx-git-delta
-        run: echo y | npx sfdx-git-delta --version || npm install -g sfdx-git-delta
-
       - name: Generate PR Delta Package
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           mkdir -p changed-sources
-          sfdx sgd:source:delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output changed-sources/ --generate-delta --source force-app/
+          sf sgd source delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output changed-sources/ --generate-delta --source force-app/
 
       - name: Run ESLint on Changed JS Files
         run: node scripts/lint-pr-files.js --delta-dir changed-sources/force-app
 
       - name: Run PMD on Changed Apex Files
         run: node scripts/run-pmd.js --delta-dir changed-sources/force-app --pmd-bin "$GITHUB_WORKSPACE/pmd-bin-7.0.0/bin/pmd"
-
-  validate-qa-build:
-    name: Validate Build on QA Org (RSOCL_Approved_QA)
-    runs-on: ubuntu-latest
-    needs: code-quality-qa
-    if: ${{ github.actor != 'dependabot[bot]' }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Dependencies & CLI
-        run: |
-          npm install --legacy-peer-deps
-          npm install -g @salesforce/cli sfdx-git-delta
-
-      - name: Generate PR Delta Package
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          mkdir -p changed-sources
-          sfdx sgd:source:delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output changed-sources/ --generate-delta --source force-app/
 
       - name: Check Apex Tests & Mandatory Pairing
         id: test-check

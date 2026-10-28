@@ -26,13 +26,14 @@ jobs:
       - name: Install Dependencies & CLI
         run: |
           npm install --legacy-peer-deps
-          npm install -g @salesforce/cli sfdx-git-delta
+          npm install -g @salesforce/cli
+          echo y | sf plugins install sfdx-git-delta
 
       - name: Generate Merge Delta Package
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           mkdir -p changed-sources
-          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+          sf sgd source delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
       - name: Detect Test Classes for Merged Changes
         id: test-check
