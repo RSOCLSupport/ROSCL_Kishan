@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="RSOCL Apex Ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Apex Code Analysis Ruleset for RSOCL Salesforce Project.
+        Includes Best Practices, Performance, Security, and Error Prone checks.
+    </description>
+
+    <!-- Best Practices -->
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveAsserts">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestShouldNotUseSeeAllDataTrue">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/bestpractices.xml/AvoidGlobalModifier">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/bestpractices.xml/AvoidLogicInTrigger">
+        <priority>3</priority>
+    </rule>
+
+    <!-- Code Style -->
+    <rule ref="category/apex/codestyle.xml/ClassNamingConventions">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/codestyle.xml/MethodNamingConventions">
+        <priority>3</priority>
+    </rule>
+
+    <!-- Error Prone -->
+    <rule ref="category/apex/errorprone.xml/AvoidDirectAccessTriggerMap">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/AvoidHardcodingId">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/EmptyCatchBlock">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/EmptyIfStmt">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/EmptyWhileStmt">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/EmptyTryBlock">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/EmptyStatementBlock">
+        <priority>3</priority>
+    </rule>
+
+    <!-- Performance -->
+    <rule ref="category/apex/performance.xml/AvoidDmlStatementsInLoops">
+        <priority>1</priority>
+    </rule>
+    <rule ref="category/apex/performance.xml/AvoidSoqlInLoops">
+        <priority>1</priority>
+    </rule>
+    <rule ref="category/apex/performance.xml/AvoidSoslInLoops">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Security -->
+    <rule ref="category/apex/security.xml/ApexSharingViolations">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexInsecureEndpoint">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexOpenRedirect">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexXSSFromURLParam">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexXSSFromEscapeFalse">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexBadCrypto">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexDangerousMethods">
+        <priority>2</priority>
+    </rule>
+    <rule ref="category/apex/security.xml/ApexSuggestUsingNamedCred">
+        <priority>3</priority>
+    </rule>
+</ruleset>
