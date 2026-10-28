@@ -7,7 +7,8 @@ public with sharing class RSOCL_MultipleApprovalControllerTest{
             RSOCL_MockDaoProcessInstanceController mockDao = new RSOCL_MockDaoProcessInstanceController();
             mockDao.getProcessInstance(null, null, null, null, null);
 
-            String processInstanceData = '{"Id":"04g2w000003rbSHAAZ","TargetObjectId":"0062w00000KdcZCAAZ","CreatedDate":"2023-03-11T09:20:50.000Z", ' + 
+            Id fakeOppId = RSOCL_MockProcessInstanceControllerTest.getFakeId(Opportunity.SObjectType);
+            String processInstanceData = '{"Id":"04g2w000003rbSHAAZ","TargetObjectId":"' + fakeOppId + '","CreatedDate":"2023-03-11T09:20:50.000Z", ' + 
                                      '"Workitems": {"totalSize": "1","done": true, "records":[{"ProcessInstanceId":"04g2w000003rbSHAAZ","Id":"04i2w000004P4BYAA0","OriginalActorId":"0052w00000DyipuAAB"}]},' + 
                                      '"Steps":{"totalSize": "1","done": true, "records":[{"ProcessInstanceId":"04g2w000003rbSHAAY","Id":"04h2w000005Nd8ZAAS","OriginalActorId":"0052w00000DyipuAAA"}]}}';
 
@@ -16,7 +17,7 @@ public with sharing class RSOCL_MultipleApprovalControllerTest{
 
             mockDaoTest.processInstanceList.add(processInstance);
             mockDaoTest.approvalDataSettingList.add(testApprovalData);
-            mockDaoTest.sObjectMap.put(Id.valueOf('0062w00000KdcZCAAZ'), new Opportunity(AccountId = RSOCL_MockProcessInstanceControllerTest.getFakeId(Account.SObjectType)));
+            mockDaoTest.sObjectMap.put(fakeOppId, new Opportunity(Id = fakeOppId, AccountId = RSOCL_MockProcessInstanceControllerTest.getFakeId(Account.SObjectType)));
 
             RSOCL_MultipleApprovalController.processListInstance = mockDaoTest;
             
