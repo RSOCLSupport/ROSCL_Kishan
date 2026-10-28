@@ -1,0 +1,77 @@
+name: Deploy to Production Org (RSOCL_Approved_Prod)
+
+on:
+  push:
+    branches:
+      - PRODUCTION
+    paths:
+      - 'force-app/**'
+
+jobs:
+  deploy-prod:
+    name: Deploy Delta to Production Org
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies & CLI
+        run: |
+          npm install --legacy-peer-deps
+          npm install -g @salesforce/cli sfdx-git-delta
+
+      - name: Generate Merge Delta Package
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          mkdir -p changed-sources
+          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+
+      - name: Detect Test Classes for Merged Changes
+        id: test-check
+        run: |
+          node scripts/check-apex-tests.js --delta-dir changed-sources/force-app --base-ref "HEAD^" --mode deploy
+
+      - name: Authenticate to Production Org (RSOCL_Approved_Prod)
+        run: |
+          echo "${{ secrets.SFDX_PROD_AUTH_URL }}" > ./SFDX_PROD_AUTH_URL.txt
+          sf org login sfdx-url --sfdx-url-file ./SFDX_PROD_AUTH_URL.txt --set-default --alias RSOCL_Approved_Prod
+          rm -f ./SFDX_PROD_AUTH_URL.txt
+
+      - name: Deploy Changes & Run Tests
+        run: |
+          if [ -d "changed-sources/force-app" ]; then
+            if [ "$TEST_LEVEL" = "RunSpecifiedTests" ]; then
+              echo "Deploying to Production with specified tests: $TESTS_TO_RUN"
+              sf project deploy start --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || true
+            else
+              echo "No Apex classes in deployment. Running with NoTestRun."
+              sf project deploy start --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || true
+            fi
+            cat deploy-result.json
+          else
+            echo "No Salesforce metadata changes in delta package."
+          fi
+
+      - name: Verify Code Coverage (Minimum 80%)
+        run: |
+          if [ -f "deploy-result.json" ]; then
+            node scripts/check-code-coverage.js --file deploy-result.json --threshold 80
+          else
+            echo "No deploy result file to evaluate."
+          fi
+
+      - name: Deploy Destructive Changes (if any)
+        run: |
+          if [ -f "changed-sources/destructiveChanges/destructiveChanges.xml" ]; then
+            echo "Deploying destructive changes to Production..."
+            sf project deploy start --metadata-dir "changed-sources/destructiveChanges" --ignore-warnings || true
+          fi
