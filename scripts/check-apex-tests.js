@@ -241,7 +241,7 @@ function run() {
     } else {
         console.log(`\n🎯 Test Classes to execute (${testList.length}):`);
         testList.forEach(t => console.log(`   - ${t}`));
-        exportOutputs('RunSpecifiedTests', testList.join(','), true);
+        exportOutputs('RunSpecifiedTests', testList.join(' '), true);
     }
 }
 

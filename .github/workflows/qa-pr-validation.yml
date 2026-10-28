@@ -72,20 +72,28 @@ jobs:
 
       - name: Check-only Deploy & Run Specified Tests
         run: |
+          DEPLOY_EXIT=0
           if [ -d "changed-sources/force-app" ]; then
             if [ "$TEST_LEVEL" = "RunSpecifiedTests" ]; then
               echo "Executing specified tests: $TESTS_TO_RUN"
-              sf project deploy validate --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || true
+              sf project deploy validate --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || DEPLOY_EXIT=$?
             else
               echo "No Apex classes modified. Running with NoTestRun."
-              sf project deploy validate --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || true
+              sf project deploy validate --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || DEPLOY_EXIT=$?
             fi
-            cat deploy-result.json
+            if [ -f "deploy-result.json" ]; then
+              cat deploy-result.json
+            fi
+            if [ "$DEPLOY_EXIT" -ne 0 ]; then
+              echo "❌ Salesforce deployment validation failed against target org (exit code $DEPLOY_EXIT)."
+              exit $DEPLOY_EXIT
+            fi
           else
             echo "No Salesforce metadata changes detected in PR delta."
           fi
 
       - name: Verify Code Coverage (Minimum 80%)
+        if: always()
         run: |
           if [ -f "deploy-result.json" ]; then
             node scripts/check-code-coverage.js --file deploy-result.json --threshold 80

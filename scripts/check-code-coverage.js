@@ -21,8 +21,8 @@ for (let i = 0; i < args.length; i++) {
 }
 
 if (!fs.existsSync(resultFile)) {
-    console.log(`⚠️ Deploy result file "${resultFile}" not found. Skipping code coverage verification.`);
-    process.exit(0);
+    console.error(`❌ Deploy result file "${resultFile}" not found. Skipping code coverage verification.`);
+    process.exit(1);
 }
 
 let data;
@@ -36,6 +36,38 @@ try {
 
 // Navigate through possible JSON structures (sf vs sfdx)
 const result = data.result || data;
+
+// 1. Verify deployment status against target org
+const isDeployFailed = 
+    (data.status !== undefined && data.status !== 0) ||
+    data.exitCode === 1 ||
+    data.name === 'FailedValidationError' ||
+    data.code === 'FailedValidationError' ||
+    (result.status && result.status !== 'Succeeded' && result.status !== 'SucceededPartial') ||
+    result.success === false;
+
+if (isDeployFailed) {
+    console.log('================================================================================');
+    console.log('❌ BUILD FAILED: Deployment / validation against the target org failed.');
+    console.log('================================================================================');
+    if (data.message) {
+        console.error(`\nError Details:\n${data.message}\n`);
+    }
+    const componentFailures = result.details?.componentFailures;
+    if (Array.isArray(componentFailures) && componentFailures.length > 0) {
+        console.log(`Component Failures (${componentFailures.length}):`);
+        componentFailures.forEach((f, idx) => {
+            const compType = f.componentType || 'Component';
+            const name = f.fileName || f.fullName || 'Unknown';
+            const problem = f.problem || 'Unknown error';
+            console.log(`   [${idx + 1}] ${compType}: ${name} -> ${problem}`);
+        });
+        console.log('');
+    }
+    console.log('================================================================================\n');
+    process.exit(1);
+}
+
 const testResult = result.details?.runTestResult || result.runTestResult;
 
 if (!testResult) {
