@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import { loadStyle, loadScript, unloadStyle } from 'lightning/platformResourceLoader';
+import { loadStyle, loadScript } from 'lightning/platformResourceLoader';
 import bootstrap from '@salesforce/resourceUrl/Bootstrap5';
 import appLogo from '@salesforce/resourceUrl/appIcon';
 import { NavigationMixin } from 'lightning/navigation';
@@ -36,17 +36,19 @@ export default class SetupInstructionComponent extends NavigationMixin(Lightning
         this.isResourceRender = true;
         switch (eventType) {
             case 'back':
-                if (+this.progressStepMap.currentStep == 1)
+                if (+this.progressStepMap.currentStep === 1)
                     this.progressStepMap.isStepsVisible = false;
                 else
-                    +this.progressStepMap.currentStep--;
+                    this.progressStepMap.currentStep--;
                 break;
             case 'next':
-                +this.progressStepMap.currentStep++;
+                this.progressStepMap.currentStep++;
                 break;
 
             case 'continue':
                 this.progressStepMap = { currentStep: 1, isStepsVisible: true, totalSteps: 3 }
+                break;
+            default:
                 break;
         }
         this.isResourceRender = false;
