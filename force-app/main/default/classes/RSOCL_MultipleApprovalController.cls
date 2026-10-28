@@ -6,7 +6,7 @@ public with sharing class RSOCL_MultipleApprovalController {
     //Method to fetch all the records which are submitted for approval
     @AuraEnabled
     public static List<SubmittedRecordsWrapper> getSubmittedApprovalRecords(){
-    try{
+try{
         List<SubmittedRecordsWrapper> lstSubmissionWrapper = new List<SubmittedRecordsWrapper>();
         //to get all the User where delgated approver is current user.
         Map<Id, User> delegatedApproverUserMap= new Map<Id, User>([SELECT Id FROM User WHERE DelegatedApproverId=: UserInfo.getUserId()]);

@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
     <description>
-        Apex Code Analysis Ruleset for RSOCL Salesforce Project.
+        Apex Code Analysis Ruleset for RSOCL Salesforce Project (PMD 7 compatible).
         Includes Best Practices, Performance, Security, and Error Prone checks.
     </description>
 
@@ -41,27 +41,15 @@
     <rule ref="category/apex/errorprone.xml/EmptyCatchBlock">
         <priority>2</priority>
     </rule>
-    <rule ref="category/apex/errorprone.xml/EmptyIfStmt">
-        <priority>3</priority>
-    </rule>
-    <rule ref="category/apex/errorprone.xml/EmptyWhileStmt">
-        <priority>3</priority>
-    </rule>
-    <rule ref="category/apex/errorprone.xml/EmptyTryBlock">
-        <priority>3</priority>
-    </rule>
     <rule ref="category/apex/errorprone.xml/EmptyStatementBlock">
         <priority>3</priority>
     </rule>
+    <rule ref="category/apex/errorprone.xml/InaccessibleAuraEnabledGetter">
+        <priority>3</priority>
+    </rule>
 
-    <!-- Performance -->
-    <rule ref="category/apex/performance.xml/AvoidDmlStatementsInLoops">
-        <priority>1</priority>
-    </rule>
-    <rule ref="category/apex/performance.xml/AvoidSoqlInLoops">
-        <priority>1</priority>
-    </rule>
-    <rule ref="category/apex/performance.xml/AvoidSoslInLoops">
+    <!-- Performance (PMD 7 uses OperationWithLimitsInLoop for SOQL/DML in loops) -->
+    <rule ref="category/apex/performance.xml/OperationWithLimitsInLoop">
         <priority>1</priority>
     </rule>
 

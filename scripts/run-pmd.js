@@ -55,6 +55,7 @@ console.log(`Ruleset: ${rulesetPath}\n`);
 // PMD CLI supports: check -d <dir> -R <ruleset> -f text --minimum-priority 3
 const pmdArgs = [
     'check',
+    '--no-progress',
     '-d', searchDir,
     '-R', rulesetPath,
     '-f', 'textcolor',

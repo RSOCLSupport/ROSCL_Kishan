@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#13C1D4</headerColor>
+        <logo>imgpsh_fullsize_anim_32</logo>
+        <logoVersion>1</logoVersion>
+        <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
+    </brand>
+    <formFactors>Small</formFactors>
+    <isNavAutoTempTabsDisabled>true</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>Let&apos;s Approve - Admin</label>
+    <navType>Standard</navType>
+    <tabs>Approval_Request</tabs>
+    <tabs>Recently_Approved_Rejected</tabs>
+    <tabs>Admin_View</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Mass_Approval_Product_UtilityBar</utilityBar>
+</CustomApplication>

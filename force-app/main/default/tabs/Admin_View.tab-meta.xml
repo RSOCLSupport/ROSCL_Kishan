@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This tab shows all the approval requests across the org. This tab is visible to Admins only.</description>
+    <label>Admin View</label>
+    <lwcComponent>adminViewComponent</lwcComponent>
+    <motif>Custom62: Chalkboard</motif>
+</CustomTab>
