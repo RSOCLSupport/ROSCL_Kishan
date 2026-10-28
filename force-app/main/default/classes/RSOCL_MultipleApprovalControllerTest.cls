@@ -20,7 +20,7 @@ public with sharing class RSOCL_MultipleApprovalControllerTest{
 
             RSOCL_MultipleApprovalController.processListInstance = mockDaoTest;
             
-            Test.startTest();
+            Test.startTest(); 
             List<RSOCL_MultipleApprovalController.SubmittedRecordsWrapper> result = RSOCL_MultipleApprovalController.getSubmittedApprovalRecords();
 
             System.assertEquals(1, result.size(), 'Result is not correct');
