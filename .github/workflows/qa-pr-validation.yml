@@ -35,8 +35,11 @@ jobs:
 
       - name: Install Salesforce CLI & Plugins
         run: |
-          npm install -g @salesforce/cli
-          echo y | sf plugins install sfdx-git-delta
+          wget -q https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
+          mkdir -p ~/sf
+          tar xJf sf-linux-x64.tar.xz -C ~/sf --strip-components 1
+          echo "$HOME/sf/bin" >> $GITHUB_PATH
+          echo y | ~/sf/bin/sf plugins install sfdx-git-delta
 
       - name: Install PMD
         run: |
