@@ -1,4 +1,4 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement } from 'lwc';
 import getObjects from '@salesforce/apex/RSOCL_ApprovalDataSettingController.getObjects';
 import getFields from '@salesforce/apex/RSOCL_ApprovalDataSettingController.getFields';
 import saveApproveSettings from '@salesforce/apex/RSOCL_ApprovalDataSettingController.saveApproveSettings';
@@ -78,7 +78,7 @@ export default class ApprovalDataSettingComp extends NavigationMixin(LightningEl
         console.log('selectedOptionsList***', JSON.stringify(this.selectedOptionsList));
     }
 
-    showApprovalDataCreatePopup(event) {
+    showApprovalDataCreatePopup() {
         this.resetModel();
         this.getsObjectsName();
         this.showModal = true;
@@ -88,13 +88,13 @@ export default class ApprovalDataSettingComp extends NavigationMixin(LightningEl
         console.log('selectedOption***', JSON.stringify(this.selectedOption));
         console.log('selectedOption->>>>', this.selectedOption);
         this.showSpinner = true;
-        if (this.selectedOption == undefined) {
-            console.log('in if......')
+        if (this.selectedOption === undefined) {
+            console.log('in if......');
             this.showSpinner = false;
-            var title = 'ERROR';
-            var variant = 'error';
-            var mode = 'dismissable';
-            var message = 'Please Select Object';
+            const title = 'ERROR';
+            const variant = 'error';
+            const mode = 'dismissable';
+            const message = 'Please Select Object';
             this.showNotification(title, message, variant, mode);
         }
         else{
@@ -108,25 +108,24 @@ export default class ApprovalDataSettingComp extends NavigationMixin(LightningEl
                         return;
                     }
                     else if (this.approveSettingsData.status === 'SUCCESS') {
-                        console.log('IN SUCCESS...')
+                        console.log('IN SUCCESS...');
                         this.showSpinner = false;
-                        var recId = this.approveSettingsData.recordId;
+                        const recId = this.approveSettingsData.recordId;
                         console.log('recId***',recId);
-                        var recordName = this.approveSettingsData.recordName;
-                        var title = 'SUCCESS';
-                        var variant = 'success';
-                        var mode = 'sticky';
-                        var message = 'record created succesfully.';
+                        const recordName = this.approveSettingsData.recordName;
+                        const title = 'SUCCESS';
+                        const variant = 'success';
+                        const mode = 'sticky';
                         //this.showNotification(title, message, variant, mode);
                         this.showNotificationForCreation(title, variant, mode,recId,recordName);
                         // eval("$A.get('e.force:refreshView').fire();");
                     }
                     else if (this.approveSettingsData.status === 'FAILED') {
                         this.showSpinner = false;
-                        var title = 'ERROR';
-                        var variant = 'error';
-                        var mode = 'dismissable';
-                        var message = 'There is an error creating records.';
+                        const title = 'ERROR';
+                        const variant = 'error';
+                        const mode = 'dismissable';
+                        const message = 'There is an error creating records.';
                         this.showNotification(title, message, variant, mode);
                         // eval("$A.get('e.force:refreshView').fire();");
                     }
@@ -168,6 +167,7 @@ export default class ApprovalDataSettingComp extends NavigationMixin(LightningEl
         }).then(generatedUrl => {
             window.open(generatedUrl);
         });
+        // eslint-disable-next-line no-eval
         eval("$A.get('e.force:refreshView').fire();");
         //this.showModal = true;
     }

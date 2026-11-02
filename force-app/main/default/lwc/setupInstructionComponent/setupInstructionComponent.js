@@ -32,7 +32,7 @@ export default class SetupInstructionComponent extends NavigationMixin(Lightning
     }
 
     handleClick(event) {
-        var eventType = event.currentTarget.dataset.type;
+        const eventType = event.currentTarget.dataset.type;
         this.isResourceRender = true;
         switch (eventType) {
             case 'back':
@@ -48,6 +48,7 @@ export default class SetupInstructionComponent extends NavigationMixin(Lightning
             case 'continue':
                 this.progressStepMap = { currentStep: 1, isStepsVisible: true, totalSteps: 3 }
                 break;
+
             default:
                 break;
         }
