@@ -18,5 +18,5 @@
     <tabs>Admin_View</tabs>
     <tabs>Approval_Data_Setting__c</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>Multiple_Approval_Product_UtilityBar</utilityBar>
+    <!-- <utilityBar>Multiple_Approval_Product_UtilityBar</utilityBar> -->
 </CustomApplication>
