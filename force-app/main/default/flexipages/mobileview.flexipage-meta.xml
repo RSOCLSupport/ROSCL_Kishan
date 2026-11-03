@@ -4,6 +4,7 @@
         <itemInstances>
             <componentInstance>
                 <componentName>massApprovalComponent</componentName>
+                <identifier>c_massApprovalComponent</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
