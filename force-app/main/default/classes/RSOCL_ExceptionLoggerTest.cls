@@ -1,7 +1,7 @@
-@isTest
+@IsTest
 private class RSOCL_ExceptionLoggerTest {
     
-    @isTest
+   @IsTest
     static void testLogError() {
         // Create a mock exception for testing
         Exception mockException = new TestException('Test Exception');
@@ -34,7 +34,10 @@ private class RSOCL_ExceptionLoggerTest {
         System.assertEquals(mockException.getMessage(), errorLog.Error_Message__c, 'Incorrect error message');
         System.assertEquals(mockException.getTypeName(), errorLog.Error_Type__c, 'Incorrect error type');
     }
-
+    private static void assignPackagePermissionSet(Id userId){
+    PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = 'Admin_Access_to_Mass_Approval_Product' LIMIT 1];
+    insert new PermissionSetAssignment(AssigneeId = userId, PermissionSetId = ps.Id);
+}
     
     private class TestException extends Exception {}
 }
