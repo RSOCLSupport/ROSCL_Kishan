@@ -32,6 +32,22 @@ jobs:
           echo "$HOME/sf/bin" >> $GITHUB_PATH
           echo y | ~/sf/bin/sf plugins install sfdx-git-delta
 
+      - name: Verify Code Formatting (Prettier)
+        run: npm run prettier:verify
+
+      - name: Lint LWC Components (ESLint)
+        run: npm run lint
+
+      - name: Run LWC Unit Tests (Jest)
+        run: npm run test:unit:coverage
+
+      - name: Run Apex Static Analysis (PMD)
+        uses: pmd/pmd-github-action@v2
+        with:
+          rulesets: 'pmd/ruleset.xml'
+          sourcePath: 'force-app'
+          analyzeModifiedFilesOnly: true
+
       - name: Generate Merge Delta Package
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
