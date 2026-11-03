@@ -3,13 +3,6 @@
     padding-bottom: 10px;
 }
 
-.ApprovalReqPage .title {
-    margin: 0 32px 0;
-    padding-top: 20px;
-    color: #008E94;
-    font-weight: bold;
-}
-
 .ApprovalReqPage .dashboard-card {
     margin: 24px 32px 0;
     text-align: center;
@@ -46,7 +39,7 @@ section.slds-modal {
     color: black;
 }
 
-lightning-icon {
+.column-btn lightning-icon {
     display: none;
 }
 
@@ -60,8 +53,50 @@ lightning-icon {
     display: block;
 }
 
-* {
-    box-sizing: border-box;
+a {
+    text-decoration: unset;
+    font-size: var(--lwc-fontSize3, 0.8125rem);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mobile_table {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+}
+
+.mobile_table .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+}
+
+.mobile_table .table td {
+    padding: 7px 10px;
+}
+
+.mobile_table .word-break {
+    word-break: break-all;
+}
+
+.mobile_table .scroll-container {
+    margin-bottom: 40px;
+}
+
+.mobile_table .scroll {
+    margin: 0;
+}
+
+th lightning-input span[part="label"] {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
 }
 
 .mobile_table .scroll tr[role="parent"] td:first-of-type, .mobile_table .scroll tr[role="parent"] th:first-of-type {
@@ -98,6 +133,20 @@ lightning-icon {
 
 .mobile_table th , .mobile_table td {
     font-size: 14px !important;
+}
+
+
+.table-title h1 {
+    color: #008E94;
+    font-weight: bold;
+}
+
+.table-title small{
+    font-size: 14px !important;
+}
+
+.table-title{
+    padding: 15px 32px 0;
 }
 
 @media screen and (max-width: 600px) {
