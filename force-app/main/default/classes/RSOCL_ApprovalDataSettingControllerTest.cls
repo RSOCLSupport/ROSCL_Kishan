@@ -1,6 +1,11 @@
 @IsTest
 private class RSOCL_ApprovalDataSettingControllerTest {
 
+    @TestSetup
+    static void setupTestData(){
+        assignPackagePermissionSet(UserInfo.getUserId());
+    }
+
     private static User getRunningUser(){
         return [SELECT Id FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1];
     }
@@ -118,8 +123,15 @@ private class RSOCL_ApprovalDataSettingControllerTest {
             Assert.isTrue(isExceptionThrown, 'AuraHandledException should be thrown for invalid object.');
         }
     }
+
     private static void assignPackagePermissionSet(Id userId){
-    PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = 'Admin_Access_to_Mass_Approval_Product' LIMIT 1];
-    insert new PermissionSetAssignment(AssigneeId = userId, PermissionSetId = ps.Id);
-}
+        PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = 'Admin_Access_to_Mass_Approval_Product' LIMIT 1];
+        List<PermissionSetAssignment> existingAssignments = [
+            SELECT Id FROM PermissionSetAssignment 
+            WHERE AssigneeId = :userId AND PermissionSetId = :ps.Id
+        ];
+        if(existingAssignments.isEmpty()){
+            insert new PermissionSetAssignment(AssigneeId = userId, PermissionSetId = ps.Id);
+        }
+    }
 }
