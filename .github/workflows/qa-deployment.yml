@@ -84,5 +84,5 @@ jobs:
         run: |
           if [ -f "changed-sources/destructiveChanges/destructiveChanges.xml" ]; then
             echo "Deploying destructive changes..."
-            sf project deploy start --metadata-dir "changed-sources/destructiveChanges" --ignore-warnings || true
+            sf project deploy start --metadata-dir "changed-sources/destructiveChanges" --ignore-warnings
           fi
