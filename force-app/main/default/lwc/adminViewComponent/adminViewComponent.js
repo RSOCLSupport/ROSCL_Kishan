@@ -30,7 +30,7 @@ export default class AdminViewComponent extends NavigationMixin(LightningElement
             this.data = result;
             if (this.data && this.data?.length > 0) {
                 this.data.forEach(row => {
-                    var index = this.tableDataArray.findIndex(x => x.objectName == row.relatedTo);
+                    var index = this.tableDataArray.findIndex(x => x.objectName === row.relatedTo);
                     if (index > -1)
                         this.tableDataArray[index].childRecords.push(row);
                     else
@@ -57,20 +57,20 @@ export default class AdminViewComponent extends NavigationMixin(LightningElement
 
     handleChildRowDisplayAction(event) {
         this.showSpinner = true;
-        var id = event.target.dataset.id;
+        const id = event.target.dataset.id;
         console.log('id***',id);
-        var displayProp = event.target.dataset.val;
+        const displayProp = event.target.dataset.val;
         console.log('displayProp***',displayProp);
 
         if (id)
-            this._expendedObjectsMap[id] = (displayProp == 'show' ? true : false);
+            this._expendedObjectsMap[id] = (displayProp === 'show' ? true : false);
             console.log('_expendedObjectsMap[id]***',this._expendedObjectsMap[id]);
         this.showSpinner = false;
     }
 
     get getTableData() {
         console.log('IN getTableData...........');
-        return (this.tableDataArray.map((row, index) => ({
+        return (this.tableDataArray.map(row => ({
             ...row,
             isExpended: this._expendedObjectsMap[row.objectName],
             totalChildRecordCount: row.childRecords?.length
@@ -112,7 +112,7 @@ export default class AdminViewComponent extends NavigationMixin(LightningElement
         switch ( colName ) {
 
             case "recordName":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.nameUpBool = true;
             else
                 this.nameDWBool = true;
@@ -120,7 +120,7 @@ export default class AdminViewComponent extends NavigationMixin(LightningElement
             break;
 
             case "submittedDate":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.dateUpBool = true;
             else
                 this.dateDWBool = true;
@@ -128,7 +128,7 @@ export default class AdminViewComponent extends NavigationMixin(LightningElement
             break;
 
             case "submittedBy":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.submiterUpBool = true;
             else
                 this.submiterDWBool = true;
@@ -136,15 +136,18 @@ export default class AdminViewComponent extends NavigationMixin(LightningElement
             break;
 
             case "Approver":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.approverUpBool = true;
             else
                 this.approverDWBool = true;
             
             break;
+            
+             default:
+            break;
 
         }
-		var data = [...this.tableDataArray];
+		const data = [...this.tableDataArray];
         if(event){
             console.log('FRom an Event')
             data.forEach(row => {

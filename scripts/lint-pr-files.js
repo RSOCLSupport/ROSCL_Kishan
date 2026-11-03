@@ -35,29 +35,44 @@ console.log('🔍 ESLINT CODE QUALITY CHECK (CHANGED LWC / AURA JAVASCRIPT FILES
 console.log('================================================================================');
 
 const searchDir = fs.existsSync(deltaDir) ? deltaDir : 'changed-sources';
-const jsFiles = findJsFiles(searchDir);
+const rawJsFiles = findJsFiles(searchDir);
 
-if (jsFiles.length === 0) {
+if (rawJsFiles.length === 0) {
     console.log('ℹ️  No JavaScript (.js) files were modified in this PR delta.');
     console.log('✅ ESLint check passed (no files to inspect).');
     console.log('================================================================================\n');
     process.exit(0);
 }
 
+// Prefer files in repository workspace root (force-app/...) if available
+const jsFiles = rawJsFiles.map(f => {
+    const rel = path.relative(process.cwd(), f).replace(/\\/g, '/');
+    if (rel.startsWith('changed-sources/force-app')) {
+        const repoPath = rel.replace('changed-sources/', '');
+        if (fs.existsSync(repoPath)) return repoPath;
+    }
+    return rel;
+});
+
 console.log(`Found ${jsFiles.length} modified JavaScript file(s) to inspect:`);
-jsFiles.forEach(f => console.log(`   - ${path.relative(process.cwd(), f)}`));
+jsFiles.forEach(f => console.log(`   - ${f}`));
 console.log('');
 
-// Run eslint using npx
-const eslintArgs = [...jsFiles];
+const eslintArgs = [];
+if (fs.existsSync('.eslintrc.json')) {
+    eslintArgs.push('-c', '.eslintrc.json');
+}
+eslintArgs.push(...jsFiles);
+
 const result = spawnSync('npx', ['eslint', ...eslintArgs], {
     stdio: 'inherit',
-    shell: true
+    shell: process.platform === 'win32'
 });
 
 if (result.status !== 0) {
     console.log('\n================================================================================');
     console.log('❌ BUILD FAILED: ESLint reported errors on modified JavaScript files.');
+    console.log('Please fix the JavaScript errors above before merging.');
     console.log('================================================================================\n');
     process.exit(result.status || 1);
 }

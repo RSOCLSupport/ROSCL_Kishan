@@ -1,9 +1,8 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, track } from 'lwc';
 import getSubmittedApprovals from '@salesforce/apex/RSOCL_MultipleApprovalController.getSubmittedApprovalRecords';
 import processApprovalRecords from '@salesforce/apex/RSOCL_MultipleApprovalController.processRecords';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
-import SystemModstamp from '@salesforce/schema/Account.SystemModstamp';
 import FORM_FACTOR from '@salesforce/client/formFactor';
 import bootstrap from '@salesforce/resourceUrl/Bootstrap5';
 import { loadStyle, loadScript } from 'lightning/platformResourceLoader';
@@ -77,7 +76,7 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                 this.data.forEach(row => {
                     row.isSelected = false;
                     row.comment = '';
-                    var index = this.tableDataArray.findIndex(x => x.objectName == row.relatedTo);
+                    const index = this.tableDataArray.findIndex(x => x.objectName === row.relatedTo);
                     if (index > -1)
                         this.tableDataArray[index].childRecords.push(row);
                     else
@@ -104,35 +103,35 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
 
     handleChildRowDisplayAction(event) {
         this.showSpinner = true;
-        var id = event.target.dataset.id;
+        const id = event.target.dataset.id;
         console.log('id***', id);
-        var displayProp = event.target.dataset.val;
+        const displayProp = event.target.dataset.val;
         console.log('displayProp***', displayProp);
 
         if (id)
-            this._expendedObjectsMap[id] = (displayProp == 'show' ? true : false);
+            this._expendedObjectsMap[id] = (displayProp === 'show' ? true : false);
         console.log('_expendedObjectsMap[id]***', this._expendedObjectsMap[id]);
         this.showSpinner = false;
     }
 
 
     selectRecord(event) {
-        var index = event.target.dataset.index;
-        var recordType = event.target.dataset.type;
-        var name = event.target.dataset.name;
-        var isSelected = event.target.checked;
-        if (recordType == 'parent' && +index >= 0) {
+        const index = event.target.dataset.index;
+        const recordType = event.target.dataset.type;
+        const name = event.target.dataset.name;
+        const isSelected = event.target.checked;
+        if (recordType === 'parent' && +index >= 0) {
             this.tableDataArray[+index].isSelected = isSelected;
             this.tableDataArray[+index].childRecords.forEach(data => { data.isSelected = isSelected });
             if (name) {
                 this._totalSelectedRecordsMap[name] = (isSelected ? this.tableDataArray[+index].childRecords.length : 0);
             }
         }
-        else if (recordType == 'child' && +index >= 0) {
-            var childIndex = event.target.dataset.childindex;
-            var isAllChildSelected = true;
-            this.tableDataArray[+index].childRecords.forEach((data, index) => {
-                if (index == +childIndex)
+        else if (recordType === 'child' && +index >= 0) {
+            const childIndex = event.target.dataset.childindex;
+            let isAllChildSelected = true;
+            this.tableDataArray[+index].childRecords.forEach((data, childRowIndex) => {
+                if (childRowIndex === +childIndex)
                     data.isSelected = isSelected;
 
                 if (!data.isSelected)
@@ -146,7 +145,7 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                     this._totalSelectedRecordsMap[name] += (isSelected ? 1 : -1);
             }
         }
-        else if (recordType == 'grand-parent') {
+        else if (recordType === 'grand-parent') {
             this.tableDataArray.forEach(data => {
                 data.isSelected = isSelected;
                 data.childRecords.forEach(childData => { childData.isSelected = isSelected });
@@ -155,9 +154,9 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
             this.isGrandParentSelected = isSelected;
         }
 
-        if (!(recordType == 'grand-parent')) {
-            var index = this.tableDataArray.findIndex(data => data.isSelected == false);
-            this.isGrandParentSelected = (index >= 0) ? false : true;
+        if (!(recordType === 'grand-parent')) {
+            const unselectedIndex = this.tableDataArray.findIndex(data => data.isSelected === false);
+            this.isGrandParentSelected = (unselectedIndex >= 0) ? false : true;
         }
         this.showSpinner = false;
     }
@@ -171,18 +170,20 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                 this._currentCommentRow = row;
                 this.showModal = true;
                 break;
+            default:
+                break;
         }
     }
 
     async handleSortdata(event) {
         // event.preventDefault();
         this.showSpinner = true;
-        var parentDataName;
+        let parentDataName;
         try {
             const sortBy = event.target.dataset.sortby;
             const parentIndex = event.target.dataset.parentindex;
-            if (sortBy == this._sortedBy) {
-                this.sortDirection = this.sortDirection == 'asc' ? 'desc' : 'asc';
+            if (sortBy === this._sortedBy) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
             } else {
                 this._sortedBy = sortBy;
                 this.sortDirection = 'asc';
@@ -196,9 +197,8 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                         return this.sortDirection === 'asc' ? 1 : -1;
                     } else if (aVal < bVal) {
                         return this.sortDirection === 'asc' ? -1 : 1;
-                    } else {
-                        return 0;
                     }
+                    return 0;
                 });
                 parentDataName = this.tableDataArray[+parentIndex].objectName;
             }
@@ -210,14 +210,13 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                         return this.sortDirection === 'asc' ? 1 : -1;
                     } else if (aVal < bVal) {
                         return this.sortDirection === 'asc' ? -1 : 1;
-                    } else {
-                        return 0;
                     }
+                    return 0;
                 });
             }
             console.log(sortBy);
             const selector = parentDataName ? `table[data-parentname=${parentDataName}] thead button[data-sortby=${sortBy}]` : `button[data-sortby=${sortBy}]`;
-            var template = await this.template.querySelector(selector);
+            const template = await this.template.querySelector(selector);
             await template.setAttribute('data-sortdirection', this.sortDirection);
             this.showSpinner = false;
         }
@@ -236,9 +235,9 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
         console.log('itemIndex***', itemIndex);
 
 
-        var data = this.tableDataArray;
+        const data = this.tableDataArray;
         data.forEach(row => {
-            if (row.objectName == objName) {
+            if (row.objectName === objName) {
                 this._currentCommentRow = row.childRecords[itemIndex];
             }
         })
@@ -253,7 +252,7 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
             console.log('addcommentforall***', addcommentforall);
             console.log('_currentCommentRow->>>', JSON.stringify(this._currentCommentRow));
             console.log('workItemId->>>', JSON.stringify(this._currentCommentRow.workItemId));
-            var data = [...this.tableDataArray];
+            const data = [...this.tableDataArray];
             console.log('data***', JSON.stringify(data));
             if (value && !addcommentforall) {
                 data.forEach(row => {
@@ -261,8 +260,8 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                     console.log('currentCommentRowWorkItemId***', currentCommentRowWorkItemId);
                     let currentRowObjName = this._currentCommentRow.relatedTo;
                     console.log('currentRowObjName***', currentRowObjName);
-                    if (row.objectName == currentRowObjName) {
-                        var index = row.childRecords.findIndex(x => x.workItemId === currentCommentRowWorkItemId);
+                    if (row.objectName === currentRowObjName) {
+                        const index = row.childRecords.findIndex(x => x.workItemId === currentCommentRowWorkItemId);
                         console.log('index***', index);
                         row.childRecords[index].comment = value;
                     }
@@ -272,7 +271,7 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                 data.forEach(row => {
                     let currentRowObjName = this._currentCommentRow.relatedTo;
                     console.log('currentRowObjName***', currentRowObjName);
-                    if (row.objectName == currentRowObjName) {
+                    if (row.objectName === currentRowObjName) {
                         row.childRecords.forEach(function (childRec) {
                             childRec.comment = value;
                         })
@@ -295,8 +294,8 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
     handleApproveAction() {
         try {
             this.disableApproveBtn = true;
-            var childRecords = [];
-            var data = this.tableDataArray;
+            const childRecords = [];
+            const data = this.tableDataArray;
             data.forEach(row => {
                 row.childRecords.forEach(function (childRec) {
                     if (childRec.isSelected) {
@@ -317,26 +316,26 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                 this.disableApproveBtn = false;
             }
             if (childRecords.length > 0) {
-                var selectedRows = [];
-                for (var i = 0; i < childRecords.length; i++) {
+                const selectedRows = [];
+                for (let i = 0; i < childRecords.length; i++) {
                     console.log('selected[i]**', childRecords[i]);
                     selectedRows.push({ workItemId: childRecords[i].workItemId, comment: childRecords[i].comment });
                 }
                 console.log('selectedRows***', selectedRows);
-                var message;
+                let message;
                 processApprovalRecords({ lstWorkItemIds: JSON.stringify(selectedRows), processType: 'Approve' }).then(result => {
                     console.log('result#' + result);
                     message = result;
                     if (message.includes('success')) {
-                        var title = 'SUCCESS';
-                        var variant = 'success';
-                        var mode = 'dismissable';
+                        const title = 'SUCCESS';
+                        const variant = 'success';
+                        const mode = 'dismissable';
                         this.showNotification(title, message, variant, mode);
                     }
                     else {
-                        var title = 'ERROR';
-                        var variant = 'error';
-                        var mode = 'dismissable';
+                        const title = 'ERROR';
+                        const variant = 'error';
+                        const mode = 'dismissable';
                         this.showNotification(title, message, variant, mode);
                     }
                     this.getSubmittedApprovals();
@@ -354,8 +353,8 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
     handleRejectAction() {
         try {
             this.disableRejectBtn = true;
-            var childRecords = [];
-            var data = this.tableDataArray;
+            const childRecords = [];
+            const data = this.tableDataArray;
             data.forEach(row => {
                 row.childRecords.forEach(function (childRec) {
                     if (childRec.isSelected) {
@@ -378,32 +377,34 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
                 this.disableRejectBtn = false;
             }
             if (childRecords.length > 0) {
-                var selectedRows = [];
-                for (var i = 0; i < childRecords.length; i++) {
+                const selectedRows = [];
+                for (let i = 0; i < childRecords.length; i++) {
                     selectedRows.push({ workItemId: childRecords[i].workItemId, comment: childRecords[i].comment })
                 }
                 console.log('selectedRows***', selectedRows);
-                var message;
+                let message;
                 processApprovalRecords({ lstWorkItemIds: JSON.stringify(selectedRows), processType: 'Reject' }).then(result => {
                     console.log('result#' + result);
                     message = result;
                     if (message.includes('success')) {
-                        var title = 'SUCCESS';
-                        var variant = 'success';
-                        var mode = 'dismissable';
+                        const title = 'SUCCESS';
+                        const variant = 'success';
+                        const mode = 'dismissable';
                         this.showNotification(title, message, variant, mode);
                     }
                     else {
-                        var title = 'ERROR';
-                        var variant = 'error';
-                        var mode = 'dismissable';
+                        const title = 'ERROR';
+                        const variant = 'error';
+                        const mode = 'dismissable';
                         this.showNotification(title, message, variant, mode);
                     }
                 })
                     .catch(error => {
                         console.log('error#' + error);
                     });
+                // eslint-disable-next-line @lwc/lwc/no-async-operation
                 setTimeout(() => {
+                    // eslint-disable-next-line no-eval
                     eval("$A.get('e.force:refreshView').fire();");
                 }, 1000);
             }
@@ -422,9 +423,8 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
         })
 
         if (this.uncommentedRecords.length > 0)
-            return false
-        else
-            return true;
+            return false;
+        return true;
     }
 
     showNotification(title, message, variant, mode) {
@@ -439,7 +439,7 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
     }
 
     get getTableData() {
-        return (this.tableDataArray.map((row, index) => ({
+        return (this.tableDataArray.map(row => ({
             ...row,
             isExpended: this._expendedObjectsMap[row.objectName],
             totalSelectedRecords: this._totalSelectedRecordsMap[row.objectName] ? `${this._totalSelectedRecordsMap[row.objectName]} out of ${row.childRecords?.length} selected` : row.childRecords?.length
@@ -457,7 +457,7 @@ export default class MassApprovalComponent extends NavigationMixin(LightningElem
         console.log('recordIdStr***', this.recordIdStr);
         console.log('recordObjApiName***', this.recordObjApiName);
     }
-    navigateToRecDetailsPage(event) {
+    navigateToRecDetailsPage() {
 
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',

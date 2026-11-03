@@ -18,22 +18,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js 18
+      - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '20'
 
       - name: Install Dependencies & CLI
         run: |
           npm install --legacy-peer-deps
-          npm install -g @salesforce/cli sfdx-git-delta
+          wget -q https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
+          mkdir -p ~/sf
+          tar xJf sf-linux-x64.tar.xz -C ~/sf --strip-components 1
+          echo "$HOME/sf/bin" >> $GITHUB_PATH
+          echo y | ~/sf/bin/sf plugins install sfdx-git-delta
 
       - name: Generate Merge Delta Package
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           mkdir -p changed-sources
-          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+          sf sgd source delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
       - name: Detect Test Classes for Merged Changes
         id: test-check
@@ -48,20 +51,28 @@ jobs:
 
       - name: Deploy Changes & Run Tests
         run: |
+          DEPLOY_EXIT=0
           if [ -d "changed-sources/force-app" ]; then
             if [ "$TEST_LEVEL" = "RunSpecifiedTests" ]; then
               echo "Deploying with specified tests: $TESTS_TO_RUN"
-              sf project deploy start --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || true
+              sf project deploy start --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || DEPLOY_EXIT=$?
             else
               echo "No Apex classes in deployment. Running with NoTestRun."
-              sf project deploy start --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || true
+              sf project deploy start --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || DEPLOY_EXIT=$?
             fi
-            cat deploy-result.json
+            if [ -f "deploy-result.json" ]; then
+              cat deploy-result.json
+            fi
+            if [ "$DEPLOY_EXIT" -ne 0 ]; then
+              echo "❌ Salesforce deployment failed against QA org (exit code $DEPLOY_EXIT)."
+              exit $DEPLOY_EXIT
+            fi
           else
             echo "No Salesforce metadata changes in delta package."
           fi
 
       - name: Verify Code Coverage (Minimum 80%)
+        if: always()
         run: |
           if [ -f "deploy-result.json" ]; then
             node scripts/check-code-coverage.js --file deploy-result.json --threshold 80
