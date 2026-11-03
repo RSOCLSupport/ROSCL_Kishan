@@ -103,9 +103,10 @@ public with sharing class RSOCL_AdminViewController {
                                     crossObjectFieldApi=fieldList[0]+'Id';
                                     crossObjectFieldName=Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap().get(crossObjectFieldApi).getDescribe().getLabel();
                                 }
-                                if(sObjectMap.get(ps.TargetObjectId).getSObject(fieldList[0])!=null && (sObjectMap.get(ps.TargetObjectId)).getSObject(fieldList[0]).get(fieldList[1])!=null)
+                                if(sObjectMap.get(ps.TargetObjectId).getSObject(fieldList[0])!=null && (sObjectMap.get(ps.TargetObjectId)).getSObject(fieldList[0]).get(fieldList[1])!=null){
                                     wrapFieldsData.fieldLabel = crossObjectFieldName+' - ' + fieldname;
                                     wrapFieldsData.fieldVal = JSON.serialize((sObjectMap.get(ps.TargetObjectId)).getSObject(fieldList[0]).get(fieldList[1]));
+                                }
                             }else{
                                 //if((sObjectMap.get(ps.TargetObjectId)).get(fieldname)!=null)
                                 wrapFieldsData.fieldLabel =  Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap().get(fieldname).getDescribe().getLabel();

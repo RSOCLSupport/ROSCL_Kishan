@@ -46,7 +46,7 @@ public with sharing class RSOCL_AdminViewControllerTest {
             Test.stopTest();
 
             Assert.areEqual(1, result.size(), 'Result size should be 1');
-            Assert.areEqual(oppId, result[0].recordId, 'Record ID should match');
+            Assert.areEqual(Id.valueOf(oppId), Id.valueOf(result[0].recordId), 'Record ID should match');
         }
     }
 
