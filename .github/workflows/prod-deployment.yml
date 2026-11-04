@@ -80,8 +80,8 @@ jobs:
               echo "Deploying to Production with specified tests: $TESTS_TO_RUN"
               sf project deploy start --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || DEPLOY_EXIT=$?
             else
-              echo "No Apex classes in deployment. Running with NoTestRun."
-              sf project deploy start --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || DEPLOY_EXIT=$?
+              echo "No Apex classes in deployment. Deploying metadata without running tests."
+              sf project deploy start --source-dir "changed-sources/force-app" --json > deploy-result.json || DEPLOY_EXIT=$?
             fi
             if [ -f "deploy-result.json" ]; then
               cat deploy-result.json
