@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Salesforce App",
   "scripts": {
-    "lint": "eslint **/{aura,lwc}/**",
+    "lint": "eslint \"force-app/main/default/{aura,lwc}/**\"",
     "lint:pr": "node scripts/lint-pr-files.js",
     "check:apex": "node scripts/check-apex-tests.js",
     "check:coverage": "node scripts/check-code-coverage.js",
