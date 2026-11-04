@@ -1,4 +1,10 @@
 {
+  "ignorePatterns": [
+    "**/staticresources/**",
+    "node_modules/**",
+    ".sfdx/**",
+    ".sf/**"
+  ],
   "extends": ["@salesforce/eslint-config-lwc/recommended"],
   "overrides": [
     {

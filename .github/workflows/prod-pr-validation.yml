@@ -6,7 +6,7 @@ on:
     branches:
       - PRODUCTION
     paths:
-      - 'force-app/**'
+      - "force-app/**"
 
 jobs:
   verify-source-branch:
@@ -30,6 +30,7 @@ jobs:
   validate-prod-build:
     name: Validate Build on Production Org (RSOCL_Approved_Prod)
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs: verify-source-branch
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
@@ -41,30 +42,38 @@ jobs:
       - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
-      - name: Install Dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Install Salesforce CLI & Plugins
+      - name: Install Dependencies & CLI
+        env:
+          SF_CONFIRM_PLUGINS: "true"
         run: |
+          npm install --legacy-peer-deps
           wget -q https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
           mkdir -p ~/sf
           tar xJf sf-linux-x64.tar.xz -C ~/sf --strip-components 1
           echo "$HOME/sf/bin" >> $GITHUB_PATH
           echo y | ~/sf/bin/sf plugins install sfdx-git-delta
 
-      - name: Install PMD
-        run: |
-          wget -q https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.0.0/pmd-dist-7.0.0-bin.zip
-          unzip -q pmd-dist-7.0.0-bin.zip
-          echo "$GITHUB_WORKSPACE/pmd-bin-7.0.0/bin" >> $GITHUB_PATH
+      - name: Lint LWC Components (ESLint)
+        run: npm run lint
+
+      - name: Run LWC Unit Tests (Jest)
+        run: npm run test:unit:coverage
+
+      - name: Run Apex Static Analysis (PMD)
+        uses: pmd/pmd-github-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          rulesets: "pmd/ruleset.xml"
+          sourcePath: "force-app"
+          analyzeModifiedFilesOnly: true
 
       - name: Generate PR Delta Package
         run: |
@@ -72,11 +81,8 @@ jobs:
           mkdir -p changed-sources
           sf sgd source delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output changed-sources/ --generate-delta --source force-app/
 
-      - name: Run ESLint on Changed JS Files
-        run: node scripts/lint-pr-files.js --delta-dir changed-sources/force-app
-
-      - name: Run PMD on Changed Apex Files
-        run: node scripts/run-pmd.js --delta-dir changed-sources/force-app --pmd-bin "$GITHUB_WORKSPACE/pmd-bin-7.0.0/bin/pmd"
+      - name: Verify Code Formatting (Prettier)
+        run: node scripts/verify-pr-formatting.js --delta-dir changed-sources/force-app
 
       - name: Check Apex Tests & Mandatory Pairing
         id: test-check
@@ -97,8 +103,8 @@ jobs:
               echo "Executing specified tests: $TESTS_TO_RUN"
               sf project deploy validate --source-dir "changed-sources/force-app" --test-level RunSpecifiedTests --tests $TESTS_TO_RUN --json > deploy-result.json || DEPLOY_EXIT=$?
             else
-              echo "No Apex classes modified. Running with NoTestRun."
-              sf project deploy validate --source-dir "changed-sources/force-app" --test-level NoTestRun --json > deploy-result.json || DEPLOY_EXIT=$?
+              echo "No Apex classes modified. Deploying metadata without running tests."
+              sf project deploy validate --source-dir "changed-sources/force-app" --json > deploy-result.json || DEPLOY_EXIT=$?
             fi
             if [ -f "deploy-result.json" ]; then
               cat deploy-result.json

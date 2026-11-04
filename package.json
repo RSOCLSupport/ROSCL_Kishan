@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Salesforce App",
   "scripts": {
-    "lint": "eslint **/{aura,lwc}/**",
+    "lint": "eslint \"force-app/main/default/{aura,lwc}/**\"",
     "lint:pr": "node scripts/lint-pr-files.js",
     "check:apex": "node scripts/check-apex-tests.js",
     "check:coverage": "node scripts/check-code-coverage.js",
@@ -14,8 +14,9 @@
     "test:unit:watch": "sfdx-lwc-jest --watch",
     "test:unit:debug": "sfdx-lwc-jest --debug",
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
-    "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
-    "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
+    "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}\"",
+    "prettier:verify": "node scripts/verify-pr-formatting.js",
+    "prettier:verify:all": "prettier --list-different \"**/*.{cmp,component,css,html,js,json,md,yaml,yml}\"",
     "postinstall": "husky install",
     "precommit": "lint-staged"
   },
