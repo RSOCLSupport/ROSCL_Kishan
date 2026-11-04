@@ -30,7 +30,7 @@ export default class RecentlyApprovedComp extends NavigationMixin (LightningElem
             this.data = result;
             if (this.data && this.data?.length > 0) {
                 this.data.forEach(row => {
-                    var index = this.tableDataArray.findIndex(x => x.status == row.approvedStatus);
+                    const index = this.tableDataArray.findIndex(x => x.status === row.approvedStatus);
                     if (index > -1)
                         this.tableDataArray[index].childRecords.push(row);
                     else
@@ -59,13 +59,13 @@ export default class RecentlyApprovedComp extends NavigationMixin (LightningElem
 
     handleChildRowDisplayAction(event) {
         this.showSpinner = true;
-        var id = event.target.dataset.id;
+        const id = event.target.dataset.id;
         console.log('id***',id);
-        var displayProp = event.target.dataset.val;
+        const displayProp = event.target.dataset.val;
         console.log('displayProp***',displayProp);
 
         if (id){
-            this._expendedObjectsMap[id] = (displayProp == 'show' ? true : false);
+            this._expendedObjectsMap[id] = (displayProp === 'show' ? true : false);
         }
         console.log('_expendedObjectsMap[id]***',JSON.stringify(this._expendedObjectsMap)); 
         console.log('_expendedObjectsMap[id]***',this._expendedObjectsMap[id]);   
@@ -79,7 +79,7 @@ export default class RecentlyApprovedComp extends NavigationMixin (LightningElem
             console.log('isExpended***',this._expendedObjectsMap[row.status]);
         })
 
-        var processedData =  (this.tableDataArray.map((row, index) =>
+        const processedData =  (this.tableDataArray.map(row =>
         ({
             ...row,
             isExpended: this._expendedObjectsMap[row.status],
@@ -140,7 +140,7 @@ export default class RecentlyApprovedComp extends NavigationMixin (LightningElem
         switch ( colName ) {
 
             case "recordName":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.nameUpBool = true;
             else
                 this.nameDWBool = true;
@@ -148,7 +148,7 @@ export default class RecentlyApprovedComp extends NavigationMixin (LightningElem
             break;
 
             case "relatedTo":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.objUpBool = true;
             else
                 this.objDWBool = true;
@@ -156,14 +156,17 @@ export default class RecentlyApprovedComp extends NavigationMixin (LightningElem
             break;
 
             case "approvedDate":
-            if ( this.sortedDirection == 'asc' )
+            if ( this.sortedDirection === 'asc' )
                 this.dateUpBool = true;
             else
                 this.dateDWBool = true;
             
             break;
+
+            default:
+            break;
         }
-		var data = [...this.tableDataArray];
+		const data = [...this.tableDataArray];
         if(event){
             console.log('FRom an Event')
             data.forEach(row => {
