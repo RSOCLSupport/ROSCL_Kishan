@@ -6,6 +6,7 @@ on:
       - PRODUCTION
     paths:
       - "force-app/**"
+  workflow_dispatch:
 
 jobs:
   deploy-prod:
