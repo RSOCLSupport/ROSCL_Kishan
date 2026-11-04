@@ -57,7 +57,7 @@ section.slds-modal {
 
 a {
   text-decoration: unset;
-  font-size: var(--lwc-fontSize3, 0.8125rem);
+  font-size: 0.8125rem;
 }
 
 .table-responsive {
