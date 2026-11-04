@@ -1,6 +1,5 @@
 # List files or directories below to ignore them when running prettier
 # More information: https://prettier.io/docs/en/ignore.html
-#
 
 **/staticresources/**
 .localdevserver
@@ -9,5 +8,10 @@
 .vscode
 node_modules/
 package-lock.json
-
 coverage/
+
+# Salesforce metadata XML files (managed canonically by Salesforce CLI)
+**/*.xml
+**/*-meta.xml
+manifest/**
+pmd/**

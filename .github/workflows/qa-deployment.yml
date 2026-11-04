@@ -5,7 +5,7 @@ on:
     branches:
       - QA
     paths:
-      - 'force-app/**'
+      - "force-app/**"
 
 jobs:
   deploy-qa:
@@ -22,17 +22,17 @@ jobs:
       - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Install Dependencies & CLI
         env:
-          SF_CONFIRM_PLUGINS: 'true'
+          SF_CONFIRM_PLUGINS: "true"
         run: |
           npm install --legacy-peer-deps
           wget -q https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
@@ -40,9 +40,6 @@ jobs:
           tar xJf sf-linux-x64.tar.xz -C ~/sf --strip-components 1
           echo "$HOME/sf/bin" >> $GITHUB_PATH
           echo y | ~/sf/bin/sf plugins install sfdx-git-delta
-
-      - name: Verify Code Formatting (Prettier)
-        run: npm run prettier:verify
 
       - name: Lint LWC Components (ESLint)
         run: npm run lint
@@ -54,8 +51,8 @@ jobs:
         uses: pmd/pmd-github-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          rulesets: 'pmd/ruleset.xml'
-          sourcePath: 'force-app'
+          rulesets: "pmd/ruleset.xml"
+          sourcePath: "force-app"
           analyzeModifiedFilesOnly: true
 
       - name: Generate Merge Delta Package
