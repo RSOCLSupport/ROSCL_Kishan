@@ -12,6 +12,7 @@ jobs:
   validate-qa-build:
     name: Validate Build on QA Org (RSOCL_Approved_QA)
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout source code
@@ -24,7 +25,15 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Install Dependencies & CLI
+        env:
+          SF_CONFIRM_PLUGINS: 'true'
         run: |
           npm install --legacy-peer-deps
           wget -q https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
@@ -45,6 +54,7 @@ jobs:
       - name: Run Apex Static Analysis (PMD)
         uses: pmd/pmd-github-action@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           rulesets: 'pmd/ruleset.xml'
           sourcePath: 'force-app'
           analyzeModifiedFilesOnly: true
