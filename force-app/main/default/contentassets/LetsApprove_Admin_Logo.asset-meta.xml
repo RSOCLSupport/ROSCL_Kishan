@@ -2,7 +2,7 @@
 <ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
     <isVisibleByExternalUsers>false</isVisibleByExternalUsers>
     <language>en_US</language>
-    <masterLabel>imgpsh_fullsize_anim_33</masterLabel>
+    <masterLabel>LetsApprove_Admin_Logo</masterLabel>
     <relationships>
         <organization>
             <access>VIEWER</access>
@@ -11,7 +11,7 @@
     <versions>
         <version>
             <number>1</number>
-            <pathOnClient>imgpsh_fullsize_anim (3).png</pathOnClient>
+            <pathOnClient>LetsApprove_Admin_Logo.png</pathOnClient>
         </version>
     </versions>
 </ContentAsset>

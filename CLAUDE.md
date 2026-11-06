@@ -8,6 +8,8 @@ A Salesforce DX project for a "Mass/Bulk Records Approval" app: users see every 
 
 Apex classes are pinned to API **66.0** on purpose (LWC/Aura are 67.0). From API 67.0 Apex runs in user mode by default, which breaks the DAO's system-mode reads and the tests; moving to 67.0 needs a deliberate redesign. Don't go to 59.0 or lower either: Code Analyzer's AppExchange rules flag it.
 
+Version 1.0.0.5 (`04tdM000000eyYXQAY`) is **released**; `sfdx-project.json` now builds 1.1.0 with `ancestorVersion: HIGHEST`. Released components are permanent: don't rename or delete packaged objects, fields or other API names. Known scanner findings that can't be fixed are explained in `docs/security-review/false-positives.md`; keep it current when the code changes.
+
 Because it's managed, any hard-coded object or field name in a JS or dynamic-SOQL string needs the `massapprv__` prefix to work in customer orgs. Static Apex references get the prefix automatically. Components in a promoted managed version are very hard to remove, so don't add metadata to `force-app` unless it belongs in the product.
 
 ## Commands
@@ -58,7 +60,9 @@ The current branch work is about fixing PMD (Apex static analysis) warnings. Sil
   - `RSOCL_AdminViewController`: pending items across all users.
   - `RSOCL_ApprovalDataSettingController`: lists the objects that have active approval processes and their fields, and saves `Approval_Data_Setting__c`.
 
-- `RSOCL_ExceptionLogger.logError(e, className, methodName)` inserts an `Exception_Logger__c` record. Every `@AuraEnabled` method catches its exception, logs it this way, and rethrows it as `AuraHandledException`.
+- `RSOCL_SchemaUtil` checks object and field names (including one-level `Rel.Field` paths) against the org schema. Every name stored in `Approval_Fields__c` or used in the dynamic queries must go through it; this is the package's protection against SOQL injection.
+- `RSOCL_ExceptionLogger.logError(e, className, methodName)` inserts an `Exception_Logger__c` record. Every `@AuraEnabled` method catches its exception, logs it this way, and throws `RSOCL_ExceptionLogger.userFacingException()`, which carries only a generic message.
+- `RSOCL_MockProcessInstanceControllerTest` is `@IsTest` and holds the shared test helpers (`getFakeId`, `assignPackagePermissionSet`). Tests that hit `USER_MODE` code must assign the package permission set first, because the package build runs tests as a user without it.
 - `RSOCL_MultipleApprovalController.getObjectName` returns `'Opportunity'` while `Test.isRunningTest()` is true, because the tests use hard-coded fake Opportunity Ids.
 
 **LWC** (`force-app/main/default/lwc`), each component exposed as a Tab or App page:

@@ -100,6 +100,9 @@ public with sharing class RSOCL_MockDaoProcessInstanceController implements IPro
   public List<Approval_Data_Setting__c> getApprovalDataSettings(
     String objectName
   ) {
+    if (objectName == null || String.isBlank(objectName)) {
+      return new List<Approval_Data_Setting__c>();
+    }
     return [
       SELECT Id, Name
       FROM Approval_Data_Setting__c

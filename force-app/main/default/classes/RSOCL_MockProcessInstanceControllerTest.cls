@@ -1,6 +1,7 @@
 /**
  * @description Mock DAO used in test classes in place of RSOCL_MockDaoProcessInstanceController
  */
+@IsTest
 public with sharing class RSOCL_MockProcessInstanceControllerTest implements RSOCL_MockDaoProcessInstanceController.IProcessDefination {
   /**
    * @description Counter used to generate fake record ids

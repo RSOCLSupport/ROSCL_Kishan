@@ -1,8 +1,9 @@
 {
   "packageDirectories": [
     {
-      "versionName": "ver 1.0",
-      "versionNumber": "1.0.0.NEXT",
+      "versionName": "ver 1.1",
+      "versionNumber": "1.1.0.NEXT",
+      "ancestorVersion": "HIGHEST",
       "path": "force-app",
       "default": true,
       "package": "Mass Records Approval",
@@ -18,6 +19,7 @@
     "Mass Records Approval@1.0.0-1": "04tdM000000e4cnQAA",
     "Mass Records Approval@1.0.0-2": "04tdM000000e4o5QAA",
     "Mass Records Approval@1.0.0-3": "04tdM000000e593QAA",
-    "Mass Records Approval@1.0.0-4": "04tdM000000ey3tQAA"
+    "Mass Records Approval@1.0.0-4": "04tdM000000ey3tQAA",
+    "Mass Records Approval@1.0.0-5": "04tdM000000eyYXQAY"
   }
 }

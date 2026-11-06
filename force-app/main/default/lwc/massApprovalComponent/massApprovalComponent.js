@@ -34,7 +34,6 @@ export default class MassApprovalComponent extends NavigationMixin(
   showNoRecordsToDisplay = false;
 
   connectedCallback() {
-    console.log("IN connectedCallback...........");
     this.getSubmittedApprovals();
     this.handleFormFactor();
   }
@@ -47,11 +46,9 @@ export default class MassApprovalComponent extends NavigationMixin(
       loadStyle(this, bootstrap + "/bootstrap-5.0.2-dist/global.css")
     ])
       .then(() => {
-        window.console.log("Files loaded.");
         this.isResourceRender = true;
       })
-      .catch((error) => {
-        window.console.log("Error " + error.body.message);
+      .catch(() => {
         this.isResourceRender = true;
       });
   }
@@ -70,7 +67,6 @@ export default class MassApprovalComponent extends NavigationMixin(
     this.showSpinner = true;
     getSubmittedApprovals()
       .then((result) => {
-        console.log("result#" + result);
         this.data = result;
         this.tableDataArray = [];
         this._totalSelectedRecordsMap = {};
@@ -93,11 +89,9 @@ export default class MassApprovalComponent extends NavigationMixin(
         } else {
           this.showNoRecordsToDisplay = true;
         }
-        console.log("tableDataArray**", JSON.stringify(this.tableDataArray));
         this.showSpinner = false;
       })
-      .catch((error) => {
-        console.log("error", error);
+      .catch(() => {
         this.showSpinner = false;
       });
   }
@@ -105,13 +99,10 @@ export default class MassApprovalComponent extends NavigationMixin(
   handleChildRowDisplayAction(event) {
     this.showSpinner = true;
     const id = event.target.dataset.id;
-    console.log("id***", id);
     const displayProp = event.target.dataset.val;
-    console.log("displayProp***", displayProp);
 
     if (id)
       this._expendedObjectsMap[id] = displayProp === "show" ? true : false;
-    console.log("_expendedObjectsMap[id]***", this._expendedObjectsMap[id]);
     this.showSpinner = false;
   }
 
@@ -220,7 +211,6 @@ export default class MassApprovalComponent extends NavigationMixin(
           return 0;
         });
       }
-      console.log(sortBy);
       const selector = parentDataName
         ? `table[data-parentname=${parentDataName}] thead button[data-sortby=${sortBy}]`
         : `button[data-sortby=${sortBy}]`;
@@ -236,11 +226,9 @@ export default class MassApprovalComponent extends NavigationMixin(
   onclickAddCommentBtn(event) {
     this.showModal = true;
     const objName = event.currentTarget.dataset.name;
-    console.log("objName***", objName);
     this.addCommentForAllMessage =
       "Do you want to add same comment for all " + objName + " records";
     const itemIndex = event.currentTarget.dataset.index;
-    console.log("itemIndex***", itemIndex);
 
     const data = this.tableDataArray;
     data.forEach((row) => {
@@ -248,51 +236,29 @@ export default class MassApprovalComponent extends NavigationMixin(
         this._currentCommentRow = row.childRecords[itemIndex];
       }
     });
-    console.log(
-      "_currentCommentRow***",
-      JSON.stringify(this._currentCommentRow)
-    );
   }
 
   addComment() {
     try {
       const value = this.template.querySelector('[data-id="commentBox"]').value;
-      console.log("value***", value);
       const addcommentforall = this.template.querySelector(
         '[data-id="checkBoxforAllComment"]'
       ).checked;
-      console.log("addcommentforall***", addcommentforall);
-      console.log(
-        "_currentCommentRow->>>",
-        JSON.stringify(this._currentCommentRow)
-      );
-      console.log(
-        "workItemId->>>",
-        JSON.stringify(this._currentCommentRow.workItemId)
-      );
       const data = [...this.tableDataArray];
-      console.log("data***", JSON.stringify(data));
       if (value && !addcommentforall) {
         data.forEach((row) => {
           let currentCommentRowWorkItemId = this._currentCommentRow.workItemId;
-          console.log(
-            "currentCommentRowWorkItemId***",
-            currentCommentRowWorkItemId
-          );
           let currentRowObjName = this._currentCommentRow.relatedTo;
-          console.log("currentRowObjName***", currentRowObjName);
           if (row.objectName === currentRowObjName) {
             const index = row.childRecords.findIndex(
               (x) => x.workItemId === currentCommentRowWorkItemId
             );
-            console.log("index***", index);
             row.childRecords[index].comment = value;
           }
         });
       } else {
         data.forEach((row) => {
           let currentRowObjName = this._currentCommentRow.relatedTo;
-          console.log("currentRowObjName***", currentRowObjName);
           if (row.objectName === currentRowObjName) {
             row.childRecords.forEach(function (childRec) {
               childRec.comment = value;
@@ -301,7 +267,6 @@ export default class MassApprovalComponent extends NavigationMixin(
         });
       }
       this.tableDataArray = data;
-      console.log(JSON.stringify(this.tableDataArray));
       this._currentCommentRow = {};
       this.showModal = false;
     } catch (e) {
@@ -325,8 +290,6 @@ export default class MassApprovalComponent extends NavigationMixin(
           }
         });
       });
-      console.log("childRecords****", childRecords);
-      console.log("childRecords length****", childRecords.length);
       if (childRecords.length <= 0) {
         const evt = new ShowToastEvent({
           title: "Error",
@@ -340,20 +303,17 @@ export default class MassApprovalComponent extends NavigationMixin(
       if (childRecords.length > 0) {
         const selectedRows = [];
         for (let i = 0; i < childRecords.length; i++) {
-          console.log("selected[i]**", childRecords[i]);
           selectedRows.push({
             workItemId: childRecords[i].workItemId,
             comment: childRecords[i].comment
           });
         }
-        console.log("selectedRows***", selectedRows);
         let message;
         processApprovalRecords({
           lstWorkItemIds: JSON.stringify(selectedRows),
           processType: "Approve"
         })
           .then((result) => {
-            console.log("result#" + result);
             message = result;
             if (message.includes("success")) {
               const title = "SUCCESS";
@@ -369,7 +329,12 @@ export default class MassApprovalComponent extends NavigationMixin(
             this.getSubmittedApprovals();
           })
           .catch((error) => {
-            console.log("error#" + error);
+            this.showNotification(
+              "ERROR",
+              error?.body?.message,
+              "error",
+              "dismissable"
+            );
           });
       }
     } catch (e) {
@@ -389,17 +354,13 @@ export default class MassApprovalComponent extends NavigationMixin(
           }
         });
       });
-      console.log("childRecords****", childRecords);
-      console.log("childRecords length****", childRecords.length);
       if (childRecords.length <= 0) {
-        console.log("now row selected...");
         const evt = new ShowToastEvent({
           title: "Error",
           message: "Please select items to Reject.",
           variant: "error",
           mode: "sticky"
         });
-        console.log("evt", evt);
         this.dispatchEvent(evt);
         this.disableRejectBtn = false;
       }
@@ -411,14 +372,12 @@ export default class MassApprovalComponent extends NavigationMixin(
             comment: childRecords[i].comment
           });
         }
-        console.log("selectedRows***", selectedRows);
         let message;
         processApprovalRecords({
           lstWorkItemIds: JSON.stringify(selectedRows),
           processType: "Reject"
         })
           .then((result) => {
-            console.log("result#" + result);
             message = result;
             if (message.includes("success")) {
               const title = "SUCCESS";
@@ -434,7 +393,12 @@ export default class MassApprovalComponent extends NavigationMixin(
             this.getSubmittedApprovals();
           })
           .catch((error) => {
-            console.log("error#" + error);
+            this.showNotification(
+              "ERROR",
+              error?.body?.message,
+              "error",
+              "dismissable"
+            );
           });
       }
     } catch (e) {
@@ -480,8 +444,6 @@ export default class MassApprovalComponent extends NavigationMixin(
     this.modalContainer = true;
     this.recordObjApiName = event.currentTarget.dataset.type;
     this.recordIdStr = event.currentTarget.dataset.val;
-    console.log("recordIdStr***", this.recordIdStr);
-    console.log("recordObjApiName***", this.recordObjApiName);
   }
   navigateToRecDetailsPage() {
     this[NavigationMixin.GenerateUrl]({

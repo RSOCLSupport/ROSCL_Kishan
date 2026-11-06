@@ -57,7 +57,7 @@ public with sharing class RSOCL_ApprovalProcessedDataController {
         'RSOCL_ApprovalProcessedDataController',
         'getProcessedAprrovalRecords'
       );
-      throw new AuraHandledException(e.getMessage());
+      throw RSOCL_ExceptionLogger.userFacingException();
     }
   }
 
@@ -102,10 +102,16 @@ public with sharing class RSOCL_ApprovalProcessedDataController {
     for (
       Approval_Data_Setting__c setting : processListInstance.getApprovalDataSettings()
     ) {
-      objFieldMap.put(
-        setting.Object_API_name__c,
-        setting.Approval_Fields__c.split(',')
-      );
+      // only names that exist in the schema reach the dynamic query
+      if (RSOCL_SchemaUtil.isValidObject(setting.Object_API_name__c)) {
+        objFieldMap.put(
+          setting.Object_API_name__c,
+          RSOCL_SchemaUtil.validFields(
+            setting.Object_API_name__c,
+            setting.Approval_Fields__c
+          )
+        );
+      }
     }
     return objFieldMap;
   }

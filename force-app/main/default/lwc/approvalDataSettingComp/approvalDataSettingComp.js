@@ -28,7 +28,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
   getsObjectsName() {
     getObjects()
       .then((result) => {
-        console.log("result#" + JSON.stringify(result));
         this.data = result;
         if (this.data && this.data?.length > 0) {
           this.dataArray = this.data;
@@ -42,7 +41,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
           });
           tempArray.sort((a, b) => a.label.localeCompare(b.label));
           this.objects = tempArray;
-          console.log("objects#" + JSON.stringify(this.objects));
         }
       })
       .catch((error) => {
@@ -76,11 +74,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
 
   handleFieldChange(event) {
     this.selectedOptionsList = event.detail.value;
-    console.log("selectedOptionsList***", this.selectedOptionsList);
-    console.log(
-      "selectedOptionsList***",
-      JSON.stringify(this.selectedOptionsList)
-    );
   }
 
   showApprovalDataCreatePopup() {
@@ -90,11 +83,8 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
   }
 
   createLetsApproveSettingRecord() {
-    console.log("selectedOption***", JSON.stringify(this.selectedOption));
-    console.log("selectedOption->>>>", this.selectedOption);
     this.showSpinner = true;
     if (this.selectedOption === undefined) {
-      console.log("in if......");
       this.showSpinner = false;
       const title = "ERROR";
       const variant = "error";
@@ -107,17 +97,14 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
         fieldList: JSON.stringify(this.selectedOptionsList)
       })
         .then((result) => {
-          console.log("result***" + JSON.stringify(result));
           this.approveSettingsData = result;
           if (this.approveSettingsData.status === "Existing Record") {
             this.showRecordExistMsg = true;
             this.showSpinner = false;
             return;
           } else if (this.approveSettingsData.status === "SUCCESS") {
-            console.log("IN SUCCESS...");
             this.showSpinner = false;
             const recId = this.approveSettingsData.recordId;
-            console.log("recId***", recId);
             const recordName = this.approveSettingsData.recordName;
             const title = "SUCCESS";
             const variant = "success";
@@ -177,7 +164,6 @@ export default class ApprovalDataSettingComp extends NavigationMixin(
   }
 
   showNotificationForCreation(title, variant, mode, recId, recordName) {
-    console.log("IN showNotificationForCreation....... ");
     const event = new ShowToastEvent({
       title: title,
       message: "Record {0} created Sucessfully ! Click {1} to view record!",

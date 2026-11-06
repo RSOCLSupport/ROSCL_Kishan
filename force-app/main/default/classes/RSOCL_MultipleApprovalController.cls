@@ -64,7 +64,7 @@ public with sharing class RSOCL_MultipleApprovalController {
         'RSOCL_MultipleApprovalController',
         'getSubmittedApprovalRecords'
       );
-      throw new AuraHandledException(e.getMessage());
+      throw RSOCL_ExceptionLogger.userFacingException();
     }
   }
 
@@ -117,7 +117,7 @@ public with sharing class RSOCL_MultipleApprovalController {
         'RSOCL_MultipleApprovalController',
         'processRecords'
       );
-      throw new AuraHandledException(e.getMessage());
+      throw RSOCL_ExceptionLogger.userFacingException();
     }
   }
 
@@ -194,11 +194,16 @@ public with sharing class RSOCL_MultipleApprovalController {
     for (
       Approval_Data_Setting__c setting : processListInstance.getApprovalDataSettings()
     ) {
-      List<String> fields = new List<String>();
-      if (String.isNotEmpty(setting.Approval_Fields__c)) {
-        fields = setting.Approval_Fields__c.split(',');
+      // only names that exist in the schema reach the dynamic query
+      if (RSOCL_SchemaUtil.isValidObject(setting.Object_API_name__c)) {
+        objFieldMap.put(
+          setting.Object_API_name__c,
+          RSOCL_SchemaUtil.validFields(
+            setting.Object_API_name__c,
+            setting.Approval_Fields__c
+          )
+        );
       }
-      objFieldMap.put(setting.Object_API_name__c, fields);
     }
     return objFieldMap;
   }

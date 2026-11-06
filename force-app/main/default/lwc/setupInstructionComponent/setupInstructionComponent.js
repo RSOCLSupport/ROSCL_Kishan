@@ -26,11 +26,9 @@ export default class SetupInstructionComponent extends NavigationMixin(
       loadStyle(this, bootstrap + "/bootstrap-5.0.2-dist/global.css")
     ])
       .then(() => {
-        window.console.log("Files loaded.");
         this.isResourceRender = true;
       })
-      .catch((error) => {
-        window.console.log("Error " + error.body.message);
+      .catch(() => {
         this.isResourceRender = true;
       });
   }

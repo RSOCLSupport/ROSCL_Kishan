@@ -23,11 +23,9 @@ export default class RecentlyApprovedComp extends NavigationMixin(
   showNoRecordsToDisplay = false;
 
   connectedCallback() {
-    console.log("IN connectedCallback...........");
     this.showSpinner = true;
     getRecentlyApprovedReq()
       .then((result) => {
-        console.log("result#" + result.length);
         this.data = result;
         if (this.data && this.data?.length > 0) {
           this.data.forEach((row) => {
@@ -48,10 +46,8 @@ export default class RecentlyApprovedComp extends NavigationMixin(
           this.showNoRecordsToDisplay = true;
         }
         this.showSpinner = false;
-        console.log("tableDataArray**", JSON.stringify(this.tableDataArray));
       })
-      .catch((error) => {
-        console.log("error#" + error);
+      .catch(() => {
         this.data = undefined;
         this.showSpinner = false;
       });
@@ -60,42 +56,26 @@ export default class RecentlyApprovedComp extends NavigationMixin(
   handleChildRowDisplayAction(event) {
     this.showSpinner = true;
     const id = event.target.dataset.id;
-    console.log("id***", id);
     const displayProp = event.target.dataset.val;
-    console.log("displayProp***", displayProp);
 
     if (id) {
       this._expendedObjectsMap[id] = displayProp === "show" ? true : false;
     }
-    console.log(
-      "_expendedObjectsMap[id]***",
-      JSON.stringify(this._expendedObjectsMap)
-    );
-    console.log("_expendedObjectsMap[id]***", this._expendedObjectsMap[id]);
     this.showSpinner = false;
   }
 
   get getTableData() {
-    console.log("IN getTableData......");
-    this.tableDataArray.forEach((row) => {
-      console.log("status***", row.status);
-      console.log("isExpended***", this._expendedObjectsMap[row.status]);
-    });
-
     const processedData = this.tableDataArray.map((row) => ({
       ...row,
       isExpended: this._expendedObjectsMap[row.status],
       totalChildRecordCount: row.childRecords?.length
     }));
-    console.log("processedData***", JSON.stringify(processedData));
     return processedData;
   }
 
   navigateToRecDetailsPage(event) {
     this.recordObjApiName = event.currentTarget.dataset.type;
     this.recordIdStr = event.currentTarget.dataset.val;
-    console.log("recordIdStr***", this.recordIdStr);
-    console.log("recordObjApiName***", this.recordObjApiName);
     this[NavigationMixin.GenerateUrl]({
       type: "standard__recordPage",
       attributes: {
@@ -110,7 +90,6 @@ export default class RecentlyApprovedComp extends NavigationMixin(
   }
 
   sortRecs(event) {
-    console.log("IN SORTRECS,,,,,,,,,,,,");
     if (event) {
       this._currentApprovedStatus = event.target.dataset.type;
     }
@@ -122,14 +101,10 @@ export default class RecentlyApprovedComp extends NavigationMixin(
     this.objDWBool = false;
 
     let colName = event ? event.target.name : undefined;
-    console.log("Column Name is ", colName);
-    console.log("sortedColumn***", this.sortedColumn);
-    console.log("sortedDirection***", this.sortedDirection);
     if (this.sortedColumn === colName)
       this.sortedDirection = this.sortedDirection === "asc" ? "desc" : "asc";
     else this.sortedDirection = "asc";
 
-    console.log("sortedDirection->>>>>", this.sortedDirection);
     let isReverse = this.sortedDirection === "asc" ? 1 : -1;
 
     if (colName) this.sortedColumn = colName;
@@ -159,10 +134,8 @@ export default class RecentlyApprovedComp extends NavigationMixin(
     }
     const data = [...this.tableDataArray];
     if (event) {
-      console.log("FRom an Event");
       data.forEach((row) => {
         if (row.status === this._currentApprovedStatus) {
-          console.log("Current status is Matching..");
           row.childRecords = JSON.parse(JSON.stringify(row.childRecords)).sort(
             (a, b) => {
               a = a[colName] ? a[colName].toLowerCase() : "z";
@@ -173,7 +146,6 @@ export default class RecentlyApprovedComp extends NavigationMixin(
         }
       });
     } else {
-      console.log("Not an Event");
       data.forEach((row) => {
         row.childRecords = JSON.parse(JSON.stringify(row.childRecords)).sort(
           (a, b) => {
