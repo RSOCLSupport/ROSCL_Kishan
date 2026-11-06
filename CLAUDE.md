@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Salesforce DX project for a "Mass/Bulk Records Approval" app: users see every approval request pending on them (directly, as a delegated approver, or through a queue/group they belong to), across any object, and approve or reject them in bulk. Admins pick which fields of each object appear next to the request. It is packaged as the **managed 2GP** package `Mass Records Approval` (ID `0HodM0000006SODSA2`, namespace `massapprv`, Dev Hub alias `vscodeOrg`). API version is 67.0.
 
+Apex classes are pinned to API **66.0** on purpose (LWC/Aura are 67.0). From API 67.0 Apex runs in user mode by default, which breaks the DAO's system-mode reads and the tests; moving to 67.0 needs a deliberate redesign. Don't go to 59.0 or lower either: Code Analyzer's AppExchange rules flag it.
+
 Because it's managed, any hard-coded object or field name in a JS or dynamic-SOQL string needs the `massapprv__` prefix to work in customer orgs. Static Apex references get the prefix automatically. Components in a promoted managed version are very hard to remove, so don't add metadata to `force-app` unless it belongs in the product.
 
 ## Commands
@@ -69,6 +71,6 @@ The current branch work is about fixing PMD (Apex static analysis) warnings. Sil
 | `approvalDataSettingComp`   | Field configuration                   | `RSOCL_ApprovalDataSettingController`                          |
 | `setupInstructionComponent` | Setup wizard                          | Embeds `assignPermissionSetComp` and `approvalDataSettingComp` |
 
-`massApprovalComponent` and `setupInstructionComponent` load the `Bootstrap5` static resource. `parentApprovalRecordListCmp` is an unused placeholder.
+`massApprovalComponent` and `setupInstructionComponent` load the `Bootstrap5` static resource.
 
 **Aura**: `ParentApprovalDataSettingComp` and `ParentAssignPermissionSetComp` are thin wrappers that let the LWCs be used where only Aura is supported (`lightning:isUrlAddressable`, quick actions, etc.).

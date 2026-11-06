@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from "lwc";
-import { loadStyle, loadScript } from "lightning/platformResourceLoader";
+import { loadStyle } from "lightning/platformResourceLoader";
 import bootstrap from "@salesforce/resourceUrl/Bootstrap5";
 import appLogo from "@salesforce/resourceUrl/appIcon";
 import { NavigationMixin } from "lightning/navigation";
@@ -21,9 +21,9 @@ export default class SetupInstructionComponent extends NavigationMixin(
   renderedCallback() {
     if (this.isResourceRender) return;
 
+    // only Bootstrap's CSS is used; its JS is not loaded
     Promise.all([
-      loadStyle(this, bootstrap + "/bootstrap-5.0.2-dist/global.css"),
-      loadScript(this, bootstrap + "/bootstrap-5.0.2-dist/js/bootstrap.min.js")
+      loadStyle(this, bootstrap + "/bootstrap-5.0.2-dist/global.css")
     ])
       .then(() => {
         window.console.log("Files loaded.");

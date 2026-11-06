@@ -5,7 +5,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
 import FORM_FACTOR from "@salesforce/client/formFactor";
 import bootstrap from "@salesforce/resourceUrl/Bootstrap5";
-import { loadStyle, loadScript } from "lightning/platformResourceLoader";
+import { loadStyle } from "lightning/platformResourceLoader";
 
 export default class MassApprovalComponent extends NavigationMixin(
   LightningElement
@@ -42,9 +42,9 @@ export default class MassApprovalComponent extends NavigationMixin(
   renderedCallback() {
     if (this.isResourceRender) return;
 
+    // only Bootstrap's CSS is used; its JS is not loaded
     Promise.all([
-      loadStyle(this, bootstrap + "/bootstrap-5.0.2-dist/global.css"),
-      loadScript(this, bootstrap + "/bootstrap-5.0.2-dist/js/bootstrap.min.js")
+      loadStyle(this, bootstrap + "/bootstrap-5.0.2-dist/global.css")
     ])
       .then(() => {
         window.console.log("Files loaded.");
