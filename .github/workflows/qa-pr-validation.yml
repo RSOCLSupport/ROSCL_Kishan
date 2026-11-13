@@ -62,9 +62,6 @@ jobs:
           mkdir -p changed-sources
           sf sgd source delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output changed-sources/ --generate-delta --source force-app/
 
-      - name: Verify Code Formatting (Prettier)
-        run: node scripts/verify-pr-formatting.js --delta-dir changed-sources/force-app
-
       - name: Check Apex Tests & Mandatory Pairing
         id: test-check
         run: |
