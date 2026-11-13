@@ -1,8 +1,22 @@
+/**
+ * @description Controller for the admin approval view. Fetches all records
+ * currently pending approval across the org (submitted by any user) along
+ * with the configured display fields from Approval_Data_Setting__c, and
+ * returns them to the Lightning component as wrapper objects.
+ */
 public with sharing class RSOCL_AdminViewController {
-    @testVisible 
+    
+    /**
+ * @description DAO instance used to fetch approval data.
+ * Replaced with a mock in test classes.
+ */
+    @TestVisible 
     public static RSOCL_MockDaoProcessInstanceController.IProcessDefination processListInstance = new RSOCL_MockDaoProcessInstanceController();
 
-    //Method to fetch all the records which are submitted for approval by All Users
+    /**
+     * @description Fetches all records submitted for approval by all users.
+     * @return List of SubmittedRecordsWrapper with approval and field data.
+     */
     @AuraEnabled
     public static List<SubmittedRecordsWrapper> getSubmittedApprovalRecordsByAllUsers(){
         try{
@@ -89,9 +103,10 @@ public with sharing class RSOCL_AdminViewController {
                                     crossObjectFieldApi=fieldList[0]+'Id';
                                     crossObjectFieldName=Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap().get(crossObjectFieldApi).getDescribe().getLabel();
                                 }
-                                if(sObjectMap.get(ps.TargetObjectId).getSObject(fieldList[0])!=null && (sObjectMap.get(ps.TargetObjectId)).getSObject(fieldList[0]).get(fieldList[1])!=null)
+                                if(sObjectMap.get(ps.TargetObjectId).getSObject(fieldList[0])!=null && (sObjectMap.get(ps.TargetObjectId)).getSObject(fieldList[0]).get(fieldList[1])!=null){
                                     wrapFieldsData.fieldLabel = crossObjectFieldName+' - ' + fieldname;
                                     wrapFieldsData.fieldVal = JSON.serialize((sObjectMap.get(ps.TargetObjectId)).getSObject(fieldList[0]).get(fieldList[1]));
+                                }
                             }else{
                                 //if((sObjectMap.get(ps.TargetObjectId)).get(fieldname)!=null)
                                 wrapFieldsData.fieldLabel =  Schema.getGlobalDescribe().get(objName).getDescribe().fields.getMap().get(fieldname).getDescribe().getLabel();
