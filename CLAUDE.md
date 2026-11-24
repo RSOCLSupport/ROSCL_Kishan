@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A Salesforce DX project for a "Mass/Bulk Records Approval" app: users see every approval request pending on them (directly, as a delegated approver, or through a queue/group they belong to), across any object, and approve or reject them in bulk. Admins pick which fields of each object appear next to the request. It is packaged as the **managed 2GP** package `Mass Records Approval` (ID `0HodM0000006SODSA2`, namespace `massapprv`, Dev Hub alias `vscodeOrg`). API version is 67.0.
+A Salesforce DX project for a "Mass/Bulk Records Approval" app: users see every approval request pending on them (directly, as a delegated approver, or through a queue/group they belong to), across any object, and approve or reject them in bulk. Admins pick which fields of each object appear next to the request. It is packaged as the **managed 2GP** package `Mass Records Approval` (ID `0HodM0000006SODSA2`, namespace `massapprv`, Dev Hub `support@rsocl.com.dev`, alias `rsoclDevHub`). API version is 67.0. The `vscodeOrg` alias points to a different org, not the Dev Hub. The Dev Hub org also holds its own unpackaged copy of the `RSOCL_` classes (API 56/57); Checkmarx scans that copy, so fixes for scan findings must be deployed there too.
 
 Apex classes are pinned to API **66.0** on purpose (LWC/Aura are 67.0). From API 67.0 Apex runs in user mode by default, which breaks the DAO's system-mode reads and the tests; moving to 67.0 needs a deliberate redesign. Don't go to 59.0 or lower either: Code Analyzer's AppExchange rules flag it.
 
-Version 1.0.0.5 (`04tdM000000eyYXQAY`) is **released**; `sfdx-project.json` now builds 1.1.0 with `ancestorVersion: HIGHEST`. Released components are permanent: don't rename or delete packaged objects, fields or other API names. Known scanner findings that can't be fixed are explained in `docs/security-review/false-positives.md`; keep it current when the code changes.
+Version 1.0.0.5 (`04tdM000000eyYXQAY`) is **released**; 1.1.0.1 (`04tdM000000fXb7QAE`) is a beta built on it; `sfdx-project.json` builds 1.1.0 with `ancestorVersion: HIGHEST`. Released components are permanent: don't rename or delete packaged objects, fields or other API names. Known scanner findings that can't be fixed are explained in `docs/security-review/false-positives.md`; keep it current when the code changes.
 
 Because it's managed, any hard-coded object or field name in a JS or dynamic-SOQL string needs the `massapprv__` prefix to work in customer orgs. Static Apex references get the prefix automatically. Components in a promoted managed version are very hard to remove, so don't add metadata to `force-app` unless it belongs in the product.
 
