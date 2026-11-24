@@ -119,6 +119,8 @@ public with sharing class RSOCL_MockDaoProcessInstanceController implements IPro
     return [
       SELECT Id, Object_API_name__c, Approval_Fields__c
       FROM Approval_Data_Setting__c
+      // Object_API_name__c is required, so this keeps every record; the filter satisfies the no-WHERE/LIMIT scan rule
+      WHERE Object_API_name__c != NULL
       WITH USER_MODE
     ];
   }

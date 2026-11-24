@@ -1,35 +1,105 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Mass Records Approval (managed 2GP, namespace massapprv): every component of the app, listed by name.
+  Mirrors force-app/; regenerate with:
+    sf project generate manifest -d force-app -n package -r manifest -a 67.0
+  Retrieve from an org where these are editable source (the namespaced dev scratch org or the original
+  development org), e.g.:
+    sf project retrieve start -x manifest/package.xml -o mra-dev
+  Orgs that only have the managed package installed return Apex without source; back up from Git instead.
+-->
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>*</members>
+        <members>RSOCL_AdminViewController</members>
+        <members>RSOCL_AdminViewControllerTest</members>
+        <members>RSOCL_ApprovalDataSettingController</members>
+        <members>RSOCL_ApprovalDataSettingControllerTest</members>
+        <members>RSOCL_ApprovalProcessedDataController</members>
+        <members>RSOCL_ApprovalProcessedDataTest</members>
+        <members>RSOCL_ExceptionLogger</members>
+        <members>RSOCL_ExceptionLoggerTest</members>
+        <members>RSOCL_MockDaoProcessInstanceController</members>
+        <members>RSOCL_MockProcessInstanceControllerTest</members>
+        <members>RSOCL_MultipleApprovalController</members>
+        <members>RSOCL_MultipleApprovalControllerTest</members>
+        <members>RSOCL_SchemaUtil</members>
+        <members>RSOCL_SchemaUtilTest</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexComponent</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexTestSuite</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexTrigger</name>
-    </types>
-    <types>
-        <members>*</members>
+        <members>ParentApprovalDataSettingComp</members>
+        <members>ParentAssignPermissionSetComp</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
-        <members>*</members>
+        <members>LetsApprove_Admin_Logo</members>
+        <members>LetsApprove_Admin_Mobile_Logo</members>
+        <members>LetsApprove_Logo</members>
+        <name>ContentAsset</name>
+    </types>
+    <types>
+        <members>Mass_Approval_Product_admin_desktop</members>
+        <members>Mass_Approval_Product_admin_mobile</members>
+        <members>Mass_Approval_Product_general</members>
+        <name>CustomApplication</name>
+    </types>
+    <types>
+        <members>Approval_Data_Setting__c.Approval_Fields__c</members>
+        <members>Approval_Data_Setting__c.Object_API_name__c</members>
+        <members>Exception_Logger__c.Additional_Information__c</members>
+        <members>Exception_Logger__c.Class_Name__c</members>
+        <members>Exception_Logger__c.Error_Line_Number__c</members>
+        <members>Exception_Logger__c.Error_Message__c</members>
+        <members>Exception_Logger__c.Error_Type__c</members>
+        <members>Exception_Logger__c.Function_Name__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Approval_Data_Setting__c</members>
+        <members>Exception_Logger__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Admin_View</members>
+        <members>Approval_Data_Setting__c</members>
+        <members>Approval_Request</members>
+        <members>Recently_Approved_Rejected</members>
+        <members>Setup</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Mass_Approval_Product_UtilityBar</members>
+        <members>Mass_Approval_Product_UtilityBar1</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members
+    >Approval_Data_Setting__c-Approval Data Settings Layout</members>
+        <members>Exception_Logger__c-Exception Logger Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>adminViewComponent</members>
+        <members>approvalDataSettingComp</members>
+        <members>assignPermissionSetComp</members>
+        <members>massApprovalComponent</members>
+        <members>recentlyApprovedComp</members>
+        <members>setupInstructionComponent</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>*</members>
+        <members>Approval_Data_Setting__c.All</members>
+        <members>Exception_Logger__c.All</members>
+        <name>ListView</name>
+    </types>
+    <types>
+        <members>Admin_Access_to_Mass_Approval_Product</members>
+        <members>General_User_Access_to_Mass_Product</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>Bootstrap5</members>
+        <members>appIcon</members>
         <name>StaticResource</name>
     </types>
     <version>67.0</version>
