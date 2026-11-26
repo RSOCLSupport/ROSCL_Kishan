@@ -143,6 +143,8 @@
     <allowInChatterGroups>true</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
+    <description
+  >Stores, for each object that has an active approval process, which fields the Let&apos;s Approve app shows next to that object&apos;s approval requests. One record per object.</description>
     <enableActivities>true</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>

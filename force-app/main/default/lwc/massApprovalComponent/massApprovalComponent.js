@@ -217,9 +217,8 @@ export default class MassApprovalComponent extends NavigationMixin(
       const template = await this.template.querySelector(selector);
       await template.setAttribute("data-sortdirection", this.sortDirection);
       this.showSpinner = false;
-    } catch (e) {
+    } catch {
       this.showSpinner = false;
-      console.error("error on sort---", e?.toString());
     }
   }
 

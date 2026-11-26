@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Function_Name__c</fullName>
+    <description>Apex method in which the error occurred.</description>
     <externalId>false</externalId>
     <label>Function Name</label>
     <length>255</length>

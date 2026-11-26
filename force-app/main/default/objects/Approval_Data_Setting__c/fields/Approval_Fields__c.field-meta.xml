@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Approval_Fields__c</fullName>
+    <description
+  >Comma-separated API names of the fields to display for the object, including one-level relationship fields such as Account.Name.</description>
     <label>Approval Fields</label>
     <length>32768</length>
     <trackHistory>false</trackHistory>

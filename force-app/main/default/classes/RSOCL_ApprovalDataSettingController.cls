@@ -157,10 +157,6 @@ public with sharing class RSOCL_ApprovalDataSettingController {
     );
     Database.SaveResult sr = srList[0];
     if (sr.isSuccess() && sr.getId() != null) {
-      System.debug(
-        LoggingLevel.DEBUG,
-        'Successfully inserted Approval Data Setting. ' + sr.getId()
-      );
       result.recordId = sr.getId();
       result.status = 'SUCCESS';
       Approval_Data_Setting__c successRec = [
@@ -171,12 +167,6 @@ public with sharing class RSOCL_ApprovalDataSettingController {
       ];
       result.recordName = successRec.Name;
     } else if (!sr.isSuccess()) {
-      for (Database.Error err : sr.getErrors()) {
-        System.debug(
-          LoggingLevel.ERROR,
-          err.getStatusCode() + ': ' + err.getMessage()
-        );
-      }
       result.status = 'FAILED';
       result.recordId = '';
       result.recordName = '';

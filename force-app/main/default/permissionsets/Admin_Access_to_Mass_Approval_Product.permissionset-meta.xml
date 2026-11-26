@@ -8,6 +8,22 @@
         <application>Mass_Approval_Product_admin_mobile</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>RSOCL_AdminViewController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>RSOCL_ApprovalDataSettingController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>RSOCL_ApprovalProcessedDataController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>RSOCL_MultipleApprovalController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description
   >This change set is used to provide access to Admins for Mass Approval Product</description>
     <fieldPermissions>
